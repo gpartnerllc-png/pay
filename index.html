@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SISTEMA DROPPFY IA - OPERACIONAL</title>
+    <title>SISTEMA DROPPFY IA</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
@@ -96,7 +96,7 @@
 
     <div id="interface">
         <div id="ui-layer" style="text-align: center; margin-bottom: 15px;">
-            <h1>SISTEMA DROPPFY IA OPERACIONAL</h1>
+            <h1>DROPPFY IA</h1>
             <p style="font-size: 0.7rem; opacity: 0.8;">CONEXÃO SEGURA AWS SA-EAST-1</p>
         </div>
          
@@ -136,7 +136,7 @@
         });
 
         // 3. LÓGICA DE CONEXÃO COM A AWS (D_IA_PAGLEVE)
-        const URL_LAMBDA = "https://mxkyrbqcwpcoqkhshtqjrfonvu0dwchv.lambda-url.sa-east-1.on.aws/";
+        const URL_LAMBDA = "https://canmeldpzs22gt57rdkzxpbgpa0vshpk.lambda-url.sa-east-1.on.aws/";
         
         async function realizarAcesso() {
             const cpf = document.getElementById('cpf').value;
@@ -201,5 +201,26 @@
             if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73)) return false;
         };
     </script>
+
+
+              <script>
+    // 1. Bloqueia o Clique Direito
+    document.addEventListener('contextmenu', event => event.preventDefault());
+
+    // 2. Bloqueia Atalhos de Teclado (F12, Ctrl+U, Ctrl+Shift+I)
+    document.onkeydown = function(e) {
+        if (e.keyCode == 123) return false; // F12
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'C'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) return false;
+        if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+    };
+
+    // 3. Anti-Debugger (Trava o console se for aberto)
+    setInterval(function() {
+        debugger;
+    }, 100);
+</script>
+    
 </body>
 </html>
