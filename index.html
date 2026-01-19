@@ -20,85 +20,7 @@
 
     </style>
 
-    <style>
-        body { 
-            margin: 0; 
-            background: #070707; 
-            overflow-x: hidden; 
-            font-family: 'Segoe UI', sans-serif; 
-            color: #fff;
-            height: 100vh;
-        }
-
-        #vanta-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 1;
-        }
-
-        #interface { 
-            position: relative; 
-            width: 100%; 
-            min-height: 100vh;
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            z-index: 10; 
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        .card { 
-            background: rgba(0, 20, 40, 0.85); 
-            border: 1px solid #ffa500; 
-            border-radius: 20px; 
-            padding: 30px; 
-            width: 100%;
-            max-width: 380px; 
-            backdrop-filter: blur(15px); 
-            box-shadow: 0 0 40px rgba(255, 165, 0, 0.2);
-            text-align: center;
-        }
-
-        h1 { font-size: 1.1rem; text-shadow: 0 0 10px #ffa500; margin-bottom: 5px; color: #ffa500; }
-        h2 { color: #fff; margin-bottom: 20px; letter-spacing: 1px; font-size: 1.3rem; }
-        
-        input { 
-            width: 100%; 
-            box-sizing: border-box;
-            background: rgba(0,0,0,0.6); 
-            border: 1px solid #444; 
-            color: #fff; 
-            padding: 12px; 
-            margin: 8px 0; 
-            border-radius: 8px; 
-            outline: none; 
-            transition: 0.3s;
-        }
-        
-        input:focus { border-color: #ffa500; box-shadow: 0 0 10px rgba(255, 165, 0, 0.3); }
-
-        button { 
-            width: 100%; 
-            padding: 15px; 
-            background: linear-gradient(45deg, #ffa500, #ff8c00); 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            color: #000; 
-            cursor: pointer; 
-            margin-top: 15px;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        button:hover { transform: scale(1.02); background: #fff; }
-
-        #status { font-size: 0.75rem; color: #ffa500; margin-top: 15px; font-weight: bold; }
-
-        .footer-info { font-size: 0.6rem; opacity: 0.6; margin-top: 20px; text-transform: uppercase; }
-    </style>
+  
     
 </head>
 <body>
@@ -141,6 +63,30 @@
                 status.innerText = "❌ FALHA CRÍTICA DE INSTÂNCIA.";
             }
         }
+    </script>
+
+    <script>
+
+          // 1. FUNDO NEURAL (VANTA.JS)
+        VANTA.NET({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            color: 0xffa500,
+            backgroundColor: 0x070707,
+            points: 15.0,
+            maxDistance: 20.0,
+            spacing: 15.0
+        });
+
+        // 2. MÁSCARA DE CPF SIMPLIFICADA
+        document.getElementById('cpf').addEventListener('input', e => {
+            let v = e.target.value.replace(/\D/g,"");
+            v = v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+            e.target.value = v;
+        });
+
+
     </script>
 
           <script>
