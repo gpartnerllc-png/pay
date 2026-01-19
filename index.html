@@ -156,17 +156,43 @@
             statusLabel.innerText = "⚡ CONECTANDO AO ROBÔ AWS...";
 
             try {
-                const response = await fetch(URL_LAMBDA, {,
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        cpf: cpf, 
-                        cep: cep,
-                        url_pedido: urlPedido || "https://loja.infinitepay.io/droppfy",
-                        v12_auth: "20260112PB1F252F75254", // Chave de autoridade
-                        origem: "FRONT_V12_OPERACIONAL"
-                    })
-                });
+    // 1. Definição da URL (Inserida direta para evitar erro de variável)
+    const URL_ALVO = "https://canmeldpzs22gt57rdkzxpbgpa0vshpk.lambda-url.sa-east-1.on.aws/";
+
+    // 2. Chamada corrigida (Sem a vírgula que estragou o código anterior)
+    const response = await fetch(URL_ALVO, {
+        method: 'POST',
+        mode: 'cors',
+        headers: { 
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ 
+            cpf: cpf, 
+            cep: cep,
+            url_pedido: typeof urlPedido !== 'undefined' ? urlPedido : "https://loja.infinitepay.io/droppfy",
+            v12_auth: "20260112PB1F252F75254",
+            origem: "FRONT_V12_OPERACIONAL"
+        })
+    });
+
+    // 3. Verificação de Resposta
+    if (!response.ok) {
+        throw new Error(`Erro na Instância: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // Redirecionamento automático
+    const linkFinal = data.url || data.checkoutUrl;
+    if (linkFinal) {
+        statusLabel.innerText = "✅ INSTÂNCIA ATIVA! REDIRECIONANDO...";
+        window.location.href = linkFinal;
+    }
+
+} catch (err) {
+    console.error("Erro Crítico:", err);
+    statusLabel.innerText = "❌ FALHA DE CONEXÃO COM A INSTÂNCIA.";
+}
 
                 const data = await response.json();
 
