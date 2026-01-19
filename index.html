@@ -113,25 +113,7 @@
 
 
      <script>
-        // 1. FUNDO NEURAL (VANTA.JS)
-        VANTA.NET({
-            el: "#vanta-bg",
-            mouseControls: true,
-            touchControls: true,
-            color: 0xffa500,
-            backgroundColor: 0x070707,
-            points: 15.0,
-            maxDistance: 20.0,
-            spacing: 15.0
-        });
-
-        // 2. MÁSCARA DE CPF SIMPLIFICADA
-        document.getElementById('cpf').addEventListener('input', e => {
-            let v = e.target.value.replace(/\D/g,"");
-            v = v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");
-            e.target.value = v;
-        });
-
+      
     <script>
         async function acionarV12() {
             const status = document.getElementById('status');
