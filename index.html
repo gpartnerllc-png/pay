@@ -40,7 +40,6 @@
             <h2>⚡ PIX PARCELADO</h2>
             <p style="font-size: 0.8rem; margin-bottom: 15px; color: #ccc;">EM 4X SEM JUROS</p>
 
-            <input type="text" id="url_p" placeholder="Link da InfinitePay (Opcional)">
             <input type="text" id="cpf" placeholder="Seu CPF" maxlength="14">
             <input type="text" id="cep" placeholder="Seu CEP" maxlength="9">
 
@@ -75,7 +74,6 @@
         async function realizarAcesso() {
             const cpf = document.getElementById('cpf').value;
             const cep = document.getElementById('cep').value;
-            const urlPedido = document.getElementById('url_p').value;
             const statusLabel = document.getElementById('status');
             const btn = document.getElementById('btn-main');
 
