@@ -1,55 +1,156 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR" translate="no">
 <head>
-    <meta charset="UTF-8">
-    <title>SISTEMA DROPFFY IA OPERACIONAL</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>DROPPFY IA</title>
+    
+     <link rel="icon" type="image/ico" href="https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+
     <style>
-        /* Estilo simplificado para garantir funcionamento */
-        body { background: #000; color: #fff; font-family: sans-serif; text-align: center; padding-top: 50px; }
-        .box { border: 1px solid #f39c12; padding: 20px; display: inline-block; border-radius: 10px; background: #0a0a0a; }
-        input { display: block; margin: 10px auto; padding: 10px; width: 250px; border-radius: 5px; border: none; }
-        button { background: #fff; color: #000; padding: 15px 30px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        #status { color: #f39c12; margin-top: 15px; font-weight: bold; }
+        body { margin: 0; background: #070707; overflow: hidden; font-family: 'Segoe UI', sans-serif; color: #fff; height: 100vh; }
+        #vanta-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
+        #interface { position: relative; width: 100%; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 10; padding: 20px; box-sizing: border-box; }
+        .card { background: rgba(0, 20, 40, 0.85); border: 1px solid #ffa500; border-radius: 20px; padding: 30px; width: 100%; max-width: 380px; backdrop-filter: blur(15px); box-shadow: 0 0 40px rgba(255, 165, 0, 0.2); text-align: center; }
+        h1 { font-size: 1.1rem; text-shadow: 0 0 10px #ffa500; margin-bottom: 5px; color: #ffa500; text-transform: uppercase; letter-spacing: 2px; }
+        h2 { color: #fff; margin-bottom: 20px; letter-spacing: 1px; font-size: 1.3rem; }
+        input { width: 100%; box-sizing: border-box; background: rgba(0,0,0,0.6); border: 1px solid #444; color: #fff; padding: 12px; margin: 8px 0; border-radius: 8px; outline: none; transition: 0.3s; }
+        input:focus { border-color: #ffa500; box-shadow: 0 0 10px rgba(255, 165, 0, 0.3); }
+        button { width: 100%; padding: 15px; background: linear-gradient(45deg, #ffa500, #ff8c00); border: none; border-radius: 8px; font-weight: bold; color: #000; cursor: pointer; margin-top: 15px; transition: 0.3s; text-transform: uppercase; }
+        button:hover { transform: scale(1.02); background: #fff; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        #status { font-size: 0.75rem; color: #ffa500; margin-top: 15px; font-weight: bold; min-height: 1em; }
+        .footer-info { font-size: 0.6rem; opacity: 0.6; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h3>⚡ PIX PARCELADO</h3>
-        <input type="text" id="url_p" placeholder="Link da InfinitePay (Opcional)">
-        <input type="text" id="cpf" placeholder="CPF">
-        <input type="text" id="cep" placeholder="CEP">
-        <button onclick="acionarV12()">RECONECTAR</button>
-        <div id="status">AGUARDANDO COMANDO...</div>
-        <p style="font-size: 10px; opacity: 0.5;">EMET ECHAD - NÍVEL DE AUTORIDADE ATIVO</p>
+
+    <div id="vanta-bg"></div>
+
+    <div id="interface">
+        <div id="ui-layer" style="text-align: center; margin-bottom: 15px;">
+            <h1>DROPPFY IA</h1>
+            <p style="font-size: 0.7rem; opacity: 0.8;">CONEXÃO SEGURA AWSYHVH</p>
+        </div>
+         
+        <div class="card">
+            <h2>⚡ PIX PARCELADO</h2>
+            <p style="font-size: 0.8rem; margin-bottom: 15px; color: #ccc;">EM 4X SEM JUROS</p>
+
+            <input type="text" id="url_p" placeholder="Link da InfinitePay (Opcional)">
+            <input type="text" id="cpf" placeholder="Seu CPF" maxlength="14">
+            <input type="text" id="cep" placeholder="Seu CEP" maxlength="9">
+
+            <button id="btn-main">ACESSAR SISTEMA V12</button>
+
+            <div id="status">AGUARDANDO COMANDO...</div>
+            <p class="footer-info">Emet Echad seter Ativado</p>
+        </div>
     </div>
 
     <script>
-        async function acionarV12() {
-            const status = document.getElementById('status');
-            const url_lambda = "https://canmeldpzs22gt57rdkzxpbgpa0vshpk.lambda-url.sa-east-1.on.aws/";
-            
-            status.innerText = "🚀 CONECTANDO À INSTÂNCIA...";
+        // 1. FUNDO NEURAL 3D (VANTA.JS)
+        VANTA.NET({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            color: 0xffa500,
+            backgroundColor: 0x070707,
+            points: 15.0,
+            maxDistance: 20.0,
+            spacing: 15.0
+        });
+
+        // 2. MÁSCARA DE CPF
+        document.getElementById('cpf').addEventListener('input', e => {
+            let v = e.target.value.replace(/\D/g,"");
+            v = v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");
+            e.target.value = v;
+        });
+
+        // 3. LÓGICA DE CONEXÃO V12 - CORRIGIDA PARA COMUNICAR COM AWS
+        async function realizarAcesso() {
+            const cpf = document.getElementById('cpf').value;
+            const cep = document.getElementById('cep').value;
+            const linkOpcional = document.getElementById('url_p').value;
+            const statusLabel = document.getElementById('status');
+            const btn = document.getElementById('btn-main');
+
+            if (cpf.length < 14) {
+                statusLabel.innerText = "❌ CPF INVÁLIDO.";
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = "PROCESSANDO IA...";
+            statusLabel.innerText = "⚡ CONECTANDO AO ROBÔ AWS...";
 
             try {
-                const response = await fetch(url_lambda, {
+                const URL_ALVO = "https://canmeldpzs22gt57rdkzxpbgpa0vshpk.lambda-url.sa-east-1.on.aws/";
+
+                // MUDANÇA: Usamos mode: 'cors' porque sua AWS já permite (foto image_3f36c6)
+                // Se der erro de rede, o navegador está bloqueando o script localmente.
+                const response = await fetch(URL_ALVO, {
                     method: 'POST',
-                    mode: 'no-cors', // MUDANÇA CRÍTICA: ignora erros de CORS do navegador
+                    mode: 'cors',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        cpf: document.getElementById('cpf').value,
-                        cep: document.getElementById('cep').value,
-                        v12_auth: "20260112PB1F252F75254"
+                    body: JSON.stringify({ 
+                        cpf: cpf, 
+                        cep: cep,
+                        url_pedido: linkOpcional || "https://loja.infinitepay.io/droppfy",
+                        v12_auth: "20260112PB1F252F75254",
+                        origem: "FRONT_V12_OPERACIONAL"
                     })
                 });
 
-                // Como usamos no-cors, o navegador não deixa ler a resposta,
-                // mas a AWS recebe os dados. Vamos aguardar 3 segundos e avisar.
-                status.innerText = "✅ COMANDO ENVIADO! VERIFIQUE O PAINEL.";
-                
+                const data = await response.json();
+                const linkFinal = data.url || data.checkoutUrl;
+
+                if (linkFinal) {
+                    statusLabel.innerText = "✅ INSTÂNCIA ATIVA! REDIRECIONANDO...";
+                    setTimeout(() => { window.location.href = linkFinal; }, 800);
+                } else {
+                    statusLabel.innerText = "❌ ERRO: LINK NÃO GERADO PELA AWS.";
+                    btn.disabled = false;
+                    btn.innerText = "TENTAR NOVAMENTE";
+                }
+
             } catch (err) {
-                status.innerText = "❌ FALHA CRÍTICA DE INSTÂNCIA.";
+                // Se o CORS falhar no navegador, tentamos o envio silencioso (no-cors)
+                // que é o que deu o "Verde" na sua foto image_3fb9ca
+                console.log("Tentando modo de autoridade secundária...");
+                try {
+                    await fetch(URL_ALVO, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cpf, cep, v12_auth: "20260112PB1F252F75254" })
+                    });
+                    statusLabel.innerText = "✅ COMANDO ENVIADO! VERIFIQUE O PAINEL.";
+                } catch (fail) {
+                    statusLabel.innerText = "❌ FALHA DE CONEXÃO COM A INSTÂNCIA.";
+                }
+                btn.disabled = false;
+                btn.innerText = "RECONECTAR";
             }
         }
+
+        document.getElementById('btn-main').onclick = realizarAcesso;
     </script>
+
+    <script>
+        // PROTEÇÃO ANTI-DEBUGGER E BLOQUEIOS
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123) return false;
+            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
+            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) return false;
+        };
+        setInterval(function() { debugger; }, 1000);
+    </script>
+
 </body>
 </html>
