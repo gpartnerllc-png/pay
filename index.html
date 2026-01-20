@@ -34,33 +34,38 @@
 
 </script>
 
-<div class="v12-background">
-    
-    <div class="v12-login-container">
-        <div class="v12-header">
-            <span class="v12-badge">DROPPFY IA</span>
-            <p class="v12-subtitle">CONEXÃO SEGURA YHVH</p>
+<div id="interface">
+        <div id="ui-layer" style="text-align: center; margin-bottom: 15px;">
+            <h1>DROPPFY IA</h1>
+            <p style="font-size: 0.7rem; opacity: 0.8;">CONEXÃO SEGURA YHVH</p>
         </div>
+         
+        <div class="card">
+            <h2>⚡ PIX PARCELADO</h2>
+            <p style="font-size: 0.8rem; margin-bottom: 15px; color: #ccc;">EM 4X SEM JUROS</p>
 
-        <form id="v12-form-auth" class="v12-card">
-            <div class="v12-title-group">
-                <span class="v12-icon">⚡</span>
-                <h1>PIX PARCELADO</h1>
-                <p>EM 4X SEM JUROS</p>
-            </div>
-
-            <input type="email" id="v12-email" placeholder="Seu E-MAIL" required>
-            <input type="password" id="v12-pass" placeholder="Crie Sua SENHA" required>
-
-            <button type="submit" class="v12-btn-main">CRIAR CONTA PAY</button>
             
-            <div class="v12-footer-actions">
-                <p>Não possui acesso?</p>
-                <button type="button" id="v12-request-access" class="v12-btn-link">Solicitar Cadastro</button>
-            </div>
-        </form>
-    </div>
+          <div id="sessao-cadastro" style="display: block; text-align: center;">
+    <input type="email" id="email_acesso" placeholder="Seu E-MAIL" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <input type="password" id="senha_acesso" placeholder="Crie Sua SENHA" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <button type="button" onclick="proximaEtapa()" style="background-color: #ffa500; font-weight: bold; width: 100%; padding: 12px; cursor: pointer;">CRIAR CONTA PAY</button>
 </div>
+<div class="v12-footer-actions">
+                <p>Não possui acesso?</p>
+     <button type="button" id="v12-request-access" class="v12-btn-link">Solicitar Cadastro</button>
+
+    <script>
+{
+  "@context": "https://schema.org",
+  "@type": "RegisterAction",
+  "name": "Cadastro Droppfy IA",
+  "agent": {
+    "@type": "Organization",
+    "name": "Emet Echad",
+    "slogan": "Conexão Segura YHVH"
+  }
+}
+    </script>
     
 <div id="fluxo-cadastro" style="display: none;">
     <input type="text" id="nome_cliente" placeholder="Nome completo igual ao RG" style="width: 100%; margin-bottom: 10px; padding: 10px;">
