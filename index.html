@@ -52,7 +52,9 @@
 </div>
 <div class="v12-footer-actions">
                 <p>Não possui acesso?</p>
-     <button type="button" id="v12-request-access" class="v12-btn-link">Solicitar Cadastro</button>
+    <button type="button" id="v12-request-access" class="v12-btn-link" onclick="dispararSinal('SOLICITACAO_ACESSO')">
+    Solicitar Cadastro
+</button>
 
 <script>
     async function dispararSinal(tipoAcao) {
@@ -83,9 +85,15 @@
     }
 }
 
-// Vincular aos seus botões da imagem
-document.querySelector('.btn-criar').onclick = () => dispararSinal('CADASTRO_DIRETO');
-document.querySelector('.btn-solicitar').onclick = () => dispararSinal('SOLICITACAO_ACESSO');
+    // Vincular aos seus botões reais pelo ID
+const btnSolicitar = document.getElementById('v12-request-access');
+
+if (btnSolicitar) {
+    btnSolicitar.onclick = () => dispararSinal('SOLICITACAO_ACESSO');
+}
+
+// Se o seu botão de "Criar Conta" tiver um ID, use-o aqui também
+// Exemplo: document.getElementById('id-do-botao-criar').onclick = () => dispararSinal('CADASTRO_DIRETO');
 
     <script>
 {
