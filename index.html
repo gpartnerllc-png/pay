@@ -98,7 +98,12 @@ async function dispararRobo() {
     formData.append('foto_doc', document.getElementById('foto_doc').files[0]);
 
     try {
-        const response = await fetch('http://54.207.222.79:5000/gerar-link-total'; 
+        
+const response = await fetch('https://cors-anywhere.herokuapp.com/http://54.207.222.79:5000/gerar-link-total', {
+    
+    method: 'POST',
+    body: formData
+});
 
             method: 'POST',
             body: formData
