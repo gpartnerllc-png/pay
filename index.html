@@ -30,23 +30,44 @@
 
     <div id="vanta-bg"></div>
 
-    <div id="interface">
-        <div id="ui-layer" style="text-align: center; margin-bottom: 15px;">
-            <h1>DROPPFY IA</h1>
-            <p style="font-size: 0.7rem; opacity: 0.8;">CONEXÃO SEGURA YHVH</p>
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "RegisterAction",
+  "name": "Cadastro Droppfy IA",
+  "agent": {
+    "@type": "Organization",
+    "name": "Emet Echad",
+    "slogan": "Conexão Segura YHVH"
+  }
+}
+</script>
+
+<div class="v12-login-box">
+    <div class="brand-header">
+        <span class="badge-ia">DROPPFY IA</span>
+        <p class="connection-text">CONEXÃO SEGURA YHVH</p>
+    </div>
+
+    <form id="form-cadastro-v12">
+        <div class="title-section">
+            <i class="bolt-icon">⚡</i>
+            <h2>PIX PARCELADO</h2>
+            <p>EM 4X SEM JUROS</p>
         </div>
-         
-        <div class="card">
-            <h2>⚡ PIX PARCELADO</h2>
-            <p style="font-size: 0.8rem; margin-bottom: 15px; color: #ccc;">EM 4X SEM JUROS</p>
 
-            
-          <div id="sessao-cadastro" style="display: block; text-align: center;">
-    <input type="email" id="email_acesso" placeholder="Seu E-MAIL" style="width: 100%; margin-bottom: 10px; padding: 10px;">
-    <input type="password" id="senha_acesso" placeholder="Crie Sua SENHA" style="width: 100%; margin-bottom: 10px; padding: 10px;">
-    <button type="button" onclick="proximaEtapa()" style="background-color: #ffa500; font-weight: bold; width: 100%; padding: 12px; cursor: pointer;">CRIAR CONTA PAY</button>
+        <input type="email" id="email" placeholder="Seu E-MAIL" required>
+        <input type="password" id="password" placeholder="Crie Sua SENHA" required>
+
+        <button type="submit" id="btn-submit">CRIAR CONTA PAY</button>
+        
+        <div class="request-access">
+            <span>Não tem convite?</span>
+            <a href="#" id="solicitar-acesso">Solicitar Cadastro</a>
+        </div>
+    </form>
 </div>
-
+    
 <div id="fluxo-cadastro" style="display: none;">
     <input type="text" id="nome_cliente" placeholder="Nome completo igual ao RG" style="width: 100%; margin-bottom: 10px; padding: 10px;">
     <input type="text" id="tel_cliente" placeholder="Telefone celular" style="width: 100%; margin-bottom: 10px; padding: 10px;">
