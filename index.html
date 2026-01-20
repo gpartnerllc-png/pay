@@ -34,29 +34,32 @@
 
 </script>
 
-<div class="v12-login-box">
-    <div class="brand-header">
-        <span class="badge-ia">DROPPFY IA</span>
-        <p class="connection-text">CONEXÃO SEGURA YHVH</p>
+<div class="v12-background">
+    
+    <div class="v12-login-container">
+        <div class="v12-header">
+            <span class="v12-badge">DROPPFY IA</span>
+            <p class="v12-subtitle">CONEXÃO SEGURA YHVH</p>
+        </div>
+
+        <form id="v12-form-auth" class="v12-card">
+            <div class="v12-title-group">
+                <span class="v12-icon">⚡</span>
+                <h1>PIX PARCELADO</h1>
+                <p>EM 4X SEM JUROS</p>
+            </div>
+
+            <input type="email" id="v12-email" placeholder="Seu E-MAIL" required>
+            <input type="password" id="v12-pass" placeholder="Crie Sua SENHA" required>
+
+            <button type="submit" class="v12-btn-main">CRIAR CONTA PAY</button>
+            
+            <div class="v12-footer-actions">
+                <p>Não possui acesso?</p>
+                <button type="button" id="v12-request-access" class="v12-btn-link">Solicitar Cadastro</button>
+            </div>
+        </form>
     </div>
-
-    <form id="form-cadastro-v12">
-        <div class="title-section">
-            <i class="bolt-icon">⚡</i>
-            <h2>PIX PARCELADO</h2>
-            <p>EM 4X SEM JUROS</p>
-        </div>
-
-        <input type="email" id="email" placeholder="Seu E-MAIL" required>
-        <input type="password" id="password" placeholder="Crie Sua SENHA" required>
-
-        <button type="submit" id="btn-submit">CRIAR CONTA PAY</button>
-        
-        <div class="request-access">
-            <span>Não tem convite?</span>
-            <a href="#" id="solicitar-acesso">Solicitar Cadastro</a>
-        </div>
-    </form>
 </div>
     
 <div id="fluxo-cadastro" style="display: none;">
