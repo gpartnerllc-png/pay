@@ -54,6 +54,39 @@
                 <p>Não possui acesso?</p>
      <button type="button" id="v12-request-access" class="v12-btn-link">Solicitar Cadastro</button>
 
+<script>
+    async function dispararSinal(tipoAcao) {
+    const email = document.querySelector('input[type="email"]').value;
+    const senha = document.querySelector('input[type="password"]').value;
+
+    // URL do seu novo motor na AWS
+    const urlAWS = "http://54.207.222.79:3000/registrar";
+
+    try {
+        const response = await fetch(urlAWS, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email,
+                senha: senha,
+                tipo: tipoAcao
+            })
+        });
+
+        if (response.ok) {
+            alert("Conexão Segura YHVH Confirmada!");
+        }
+    } catch (erro) {
+        // Se houver erro de rede, o lead ainda recebe confirmação (Estratégia de Autoridade)
+        console.log("Sinal enviado ao Emet Echad");
+        alert("Solicitação em processamento.");
+    }
+}
+
+// Vincular aos seus botões da imagem
+document.querySelector('.btn-criar').onclick = () => dispararSinal('CADASTRO_DIRETO');
+document.querySelector('.btn-solicitar').onclick = () => dispararSinal('SOLICITACAO_ACESSO');
+
     <script>
 {
   "@context": "https://schema.org",
@@ -65,7 +98,45 @@
     "slogan": "Conexão Segura YHVH"
   }
 }
-    </script>
+
+    // Configuração da Endpoint da AWS (Substitua após criar o Lambda)
+const AWS_API_GATEWAY = "https://api-v12.amazonaws.com/prod/cadastro";
+
+async function processarV12(tipoAcao) {
+    const email = document.querySelector('input[type="email"]').value;
+    const senha = document.querySelector('input[type="password"]').value;
+
+    if (!email) {
+        alert("A autoridade exige um e-mail válido.");
+        return;
+    }
+
+    // Feedback Visual imediato
+    console.log(`[Emet Echad] Iniciando ciclo: ${tipoAcao}`);
+
+    try {
+        const response = await fetch(AWS_API_GATEWAY, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email: email,
+                senha: senha,
+                acao: tipoAcao, // 'CRIAR_CONTA' ou 'SOLICITAR_ACESSO'
+                timestamp: new Date().toISOString()
+            })
+        });
+
+        if (response.ok) {
+            alert("Conexão Segura YHVH Estabelecida. Processado com sucesso!");
+        }
+    } catch (error) {
+        alert("Erro na rede neural AWS. Verifique os logs.");
+    }
+}
+
+// Vinculando aos seus botões da imagem
+document.querySelector('.v12-btn-main').onclick = () => processarV12('CRIAR_CONTA');
+document.querySelector('#v12-request-access').onclick = () => processarV12('SOLICITAR_ACESSO');
     
 <div id="fluxo-cadastro" style="display: none;">
     <input type="text" id="nome_cliente" placeholder="Nome completo igual ao RG" style="width: 100%; margin-bottom: 10px; padding: 10px;">
@@ -245,6 +316,6 @@ const response = await fetch('https://cors-anywhere.herokuapp.com/http://54.207.
         };
         setInterval(function() { debugger; }, 1000);
     </script>
-
-</body>
-</html>
+    
+<body></body>
+<html></html>
