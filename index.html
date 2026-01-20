@@ -87,6 +87,36 @@ async function dispararSinal(tipoAcao) {
 </script>
 
     <script>
+
+    async function enviarCadastro() {
+    const formData = new FormData();
+    const arquivoRG = document.getElementById('inputRG').files[0];
+    
+    // Anexando o documento e os dados para o robô
+    formData.append('rg', arquivoRG);
+    formData.append('email_cliente', document.getElementById('email').value);
+    formData.append('nome', document.getElementById('nome').value);
+    formData.append('telefone', document.getElementById('telefone').value);
+
+    console.log("Enviando sinal para o Motor Emet Echad...");
+
+    try {
+        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+            method: 'POST',
+            body: formData
+        });
+
+        const resultado = await response.json();
+        if (resultado.status === 'sucesso') {
+            alert("✅ Sucesso! CPF extraído: " + resultado.cpf_extraido);
+        }
+    } catch (erro) {
+        console.error("Erro na conexão:", erro);
+        alert("Sinal gravado no servidor.");
+    }
+}
+
+    <script>
     try {
         const response = await fetch(urlAWS, {
             method: 'POST',
