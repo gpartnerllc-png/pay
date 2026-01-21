@@ -366,27 +366,7 @@ async function conectarComAWS() {
 }
 </script>
 
-       <script>
-    // PROTEÇÃO DE AUTORIDADE EMET SETER
-    (function() {
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        
-        document.onkeydown = function(e) {
-            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 73)) return false;
-        };
-
-        // Detecta console aberto sem travar a CPU
-        let checkStatus = false;
-        const element = new Image();
-        Object.defineProperty(element, 'id', {
-            get: function() {
-                // Se alguém tentar inspecionar o elemento, redireciona ou limpa
-                window.location.href = "about:blank";
-            }
-        });
-        console.log(element);
-    })();
-</script>
+   
   
 
 
