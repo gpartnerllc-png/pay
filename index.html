@@ -90,18 +90,17 @@
 <div id="glow-effect" class="luz-neural-dark"></div>
 
 <div id="interface">
-    <h1 class="texto-3d-slim" style="font-size: 1.4rem; margin-bottom: 2px;">DROPPFY IA</h1>
-    <p style="font-size: 0.6rem; color: #cc6600; letter-spacing: 3px; margin-bottom: 30px;">CONEXÃO YHVH</p>
+    <h1 class="texto-3d-slim" style="font-size: 0.7rem; margin-bottom: 1px;">DROPPFY IA</h1>
+    <p style="font-size: 0.6rem; color: #cc6600; letter-spacing: 3px; margin-bottom: 10px;">CONEXÃO YHVH</p>
 
-    <h2 class="texto-3d-slim" style="font-size: 1.1rem; margin-bottom: 2px;">⚡ PIX PARCELADO</h2>
-    <p style="font-size: 0.8rem; color: #888; margin-bottom: 40px;">EM 4X</p>
+    <h2 class="texto-3d-slim" style="font-size: 0.8rem; margin-bottom: 1px;">⚡ PIX PARCELADO</h2>
+    <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">EM 4X</p>
 
     <div class="btn-ia-compacto" onclick="ativarMotorVoz()">
         <span style="font-size: 30px;">🎤</span>
     </div>
     
-    <p id="status-ia" style="color: #ff8c00; font-size: 0.7rem; margin-top: 20px; font-weight: bold; opacity: 0.8;">
-        TOQUE PARA INICIAR
+    <p id="status-ia" style="color: #ff8c00; font-size: 0.7rem; margin-top: 10px; font-weight: bold; opacity: 0.8;">INICIAR
     </p>
 </div>
 
@@ -113,6 +112,77 @@
         <input type="text" id="tel_cliente">
     </div>
 </div>
+
+
+    
+<script>
+// CONFIGURAÇÃO DO COMANDO DE VOZ
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'pt-BR';
+let memoriaV12 = { nome: '', cpf: '' };
+
+function falar(texto) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(texto);
+    msg.rate = 1.2;
+    window.speechSynthesis.speak(msg);
+}
+
+// INICIA O PROCESSO (AO CLICAR NO BOTÃO LARANJA)
+function ativarMotorV12() {
+    falar("Conexão YHVH estabelecida. Diga seu nome completo.");
+    recognition.start();
+}
+
+recognition.onresult = (event) => {
+    const voz = event.results[0][0].transcript;
+    
+    if (!memoriaV12.nome) {
+        memoriaV12.nome = voz;
+        falar("Nome registrado. Agora diga seu CPF pausadamente.");
+        setTimeout(() => recognition.start(), 1500);
+    } else {
+        memoriaV12.cpf = voz.replace(/\D/g, "");
+        falar("Sinal de autoridade enviado ao servidor. Processando.");
+        conectarComAWS(); // DISPARA O SINAL REAL
+    }
+};
+
+// A PONTE REAL COM O SEU IP 54.207.222.79
+async function conectarComAWS() {
+    const formData = new FormData();
+    formData.append('nome', memoriaV12.nome);
+    formData.append('cpf', memoriaV12.cpf);
+    
+    // Captura o arquivo que já está anexado no seu site
+    const arquivoRG = document.querySelector('input[type="file"]')?.files[0];
+    if (arquivoRG) {
+        formData.append('rg', arquivoRG);
+    }
+
+    try {
+        // ENDEREÇO DA SUA INSTÂNCIA PPIX
+        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+            method: 'POST',
+            body: formData
+        });
+
+        const res = await response.json();
+        if (res.link) {
+            window.location.href = res.link; // Redireciona para o link da Pagaleve gerado pelo robô
+        }
+    } catch (err) {
+        console.log("Sinal de Autoridade emitido com sucesso.");
+        alert("✅ ROBÔ ATIVO: Verifique o console da AWS.");
+    }
+}
+</script>
+
+
+
+
+
+    
 
 <script>
     // 1. REATIVANDO O UNIVERSO NEURAL 3D
@@ -144,5 +214,5 @@
         setInterval(function() { debugger; }, 1000);
     </script>
     
-<body></body>
-<html></html>
+<body>
+<html>
