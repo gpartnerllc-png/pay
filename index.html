@@ -26,6 +26,28 @@
 </STYLE>
     
     <style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: #000;
+    }
+    #vanta-bg {
+        position: fixed;
+        width: 100%;
+        height: 100vh;
+        top: 0;
+        left: 0;
+        z-index: -1; /* Fica atrás de tudo */
+    }
+</style>
+    <style>
+
+<div id="vanta-bg"></div>
+    
+    
     let t = new SpeechSynthesisUtterance("Teste de conexão YHVH. O som está ativo.");
 window.speechSynthesis.speak(t);
 
@@ -112,23 +134,35 @@ window.speechSynthesis.speak(t);
 
  <div id="vanta-canvas">
     
+    
+   <script>
     window.addEventListener('DOMContentLoaded', () => {
-    VANTA.NET({
-        el: "body", // Aplica a luz em todo o fundo do universo
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        scale: 1.00,
-        scaleMobile: 1.00,
-        color: 0xff8c00, // Laranja da Conexão YHVH
-        backgroundColor: 0x0, // Preto absoluto do espaço
-        points: 12.00,
-        maxDistance: 24.00,
-        spacing: 16.00
+        VANTA.NET({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0xff8c00,       // Laranja Vibrante YHVH
+            backgroundColor: 0x0, // Espaço Profundo
+            points: 20.00,        // Aumenta a quantidade de luzes
+            maxDistance: 25.00,   // Linhas mais longas e conectadas
+            spacing: 13.00,       // Mais denso e rápido
+            showDots: true        // Ativa os pontos de energia
+        });
     });
+</script>
 
+
+
+
+
+    
+
+        <script>
     // Memória Neural
     let dadosUsuario = { 
         nome: '', cpf: '', endereco: '', whatsapp: '', 
