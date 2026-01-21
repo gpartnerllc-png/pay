@@ -82,7 +82,7 @@
 
     <div class="container">
         <div class="card-v12">
-            <div class="badge-v12">V12</div>
+            <div class="badge-v12">TAV</div>
             <h1>EMET SETER</h1>
             <p>IHVH AION</p>
 
@@ -271,58 +271,60 @@ app.post('/registrar-completo', upload.any(), async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log("✅ GATEWAY V12 ONLINE NA PORTA 3000"));
+app.listen(3000, () => console.log("✅ GATEWAY ONLINE NA PORTA 3000"));
     
    
 
     
 <script>
-// CONFIGURAÇÃO DO COMANDO DE VOZ
+// CONFIGURAÇÃO DO COMANDO DE VOZ - LIMPO E FUNCIONAL
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.lang = 'pt-BR';
+recognition.interimResults = false;
+
 let memoriaV12 = { nome: '', cpf: '' };
 
 function falar(texto) {
     window.speechSynthesis.cancel();
     const msg = new SpeechSynthesisUtterance(texto);
-    msg.rate = 1.2;
+    msg.rate = 1.1;
+    msg.pitch = 1;
     window.speechSynthesis.speak(msg);
 }
 
-// INICIA O PROCESSO (AO CLICAR NO BOTÃO LARANJA)
+// GATILHO DE PARTIDA
 function ativarMotorV12() {
-    falar("Conexão YHVH estabelecida. Diga seu nome completo.");
+    console.log("Iniciando Motor V12...");
+    falar("Conexão estabelecida. Diga seu nome completo.");
     recognition.start();
 }
 
 recognition.onresult = (event) => {
     const voz = event.results[0][0].transcript;
+    console.log("IA Ouviu:", voz);
     
     if (!memoriaV12.nome) {
         memoriaV12.nome = voz;
         falar("Nome registrado. Agora diga seu CPF pausadamente.");
         setTimeout(() => recognition.start(), 1500);
-    } else {
+    } else if (!memoriaV12.cpf) {
         memoriaV12.cpf = voz.replace(/\D/g, "");
-        falar("Sinal de autoridade enviado ao servidor. Processando.");
-        conectarComAWS(); // DISPARA O SINAL REAL
+        falar("Sinal de autoridade enviado. Aguarde o link de pagamento.");
+        conectarComAWS(); 
     }
 };
 
-// A PONTE REAL COM O SEU IP 54.207.222.79
 async function conectarComAWS() {
+    document.getElementById('status-ia').innerText = "PROCESSANDO NA AWS...";
+    
     const formData = new FormData();
     formData.append('nome', memoriaV12.nome);
     formData.append('cpf', memoriaV12.cpf);
     
-    // Captura o arquivo que já está anexado no seu site
     const arquivoRG = document.querySelector('input[type="file"]')?.files[0];
-    if (arquivoRG) {
-        formData.append('rg', arquivoRG);
-    }
+    if (arquivoRG) formData.append('rg', arquivoRG);
 
     try {
-        // ENDEREÇO DA SUA INSTÂNCIA PPIX
         const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
             method: 'POST',
             body: formData
@@ -330,11 +332,13 @@ async function conectarComAWS() {
 
         const res = await response.json();
         if (res.link) {
-            window.location.href = res.link; // Redireciona para o link da Pagaleve gerado pelo robô
+            window.location.href = res.link;
+        } else {
+            throw new Error("Link não gerado");
         }
     } catch (err) {
-        console.log("Sinal de Autoridade emitido com sucesso.");
-        alert("✅ ROBÔ ATIVO: Verifique o console da AWS.");
+        console.error("Erro na conexão:", err);
+        document.getElementById('status-ia').innerText = "ERRO NA CONEXÃO!";
     }
 }
 </script>
