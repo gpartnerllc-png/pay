@@ -223,7 +223,6 @@ async function enviarParaAWS() {
     formData.append('descricao', dadosUsuario.descricao);
     formData.append('id_produto', dadosUsuario.id_produto);
     formData.append('valor', dadosUsuario.valor);
-    if (arquivoRG) formData.append('rg', arquivoRG);
 
     try {
         const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
@@ -257,7 +256,7 @@ app.post('/registrar-completo', async (req, res) => {
     console.log("⚡ INICIANDO:", dados.nome);
 if (req.file) {
    const { data: { text } } = await Tesseract.recognize(req.file.path, 'por');
-   console.log("OCR Concluído");
+   
 
     const browser = await puppeteer.launch({ 
         headless: true, 
