@@ -155,162 +155,108 @@
     };
 </script>
 
-    <script>
-function ativarComandoNeural() {
-    // 1. Gatilho de Luz
-    const glow = document.getElementById('glow-effect');
-    glow.classList.add('luz-expansao');
-    
-    // 2. Feedback Visual e Sonoro
-    document.getElementById('status-ia').innerText = "IA OUVINDO COMANDO...";
-    const somFeedback = new SpeechSynthesisUtterance("IA Ativada. Diga seu CPF ou anexe o RG.");
-    window.speechSynthesis.speak(somFeedback);
-
-    // 3. Inicia Escuta (Speech Recognition)
-    iniciarEscutaVoz(); // Aqui chama a função que já estruturamos
-
-    // Reseta a luz após 2 segundos
-    setTimeout(() => {
-        glow.classList.remove('luz-expansao');
-    }, 2000);
-}
-
-function iniciarEscutaVoz() {
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'pt-BR';
-    recognition.start();
-
-    recognition.onresult = (event) => {
-        const voz = event.results[0][0].transcript;
-        console.log("Comando Neural Capturado:", voz);
-        // Envia para o seu robô na AWS
-        processarComandoNoRobo(voz);
-    };
-}
-</script>
-
-
-
-            
-
-            
 <script>
-
-
-            async function executarRoboV12(dados) {
-    const formData = new FormData();
-    // O arquivo você ainda pega do input (foto_doc), mas os textos vêm da voz
-    const foto = document.getElementById('foto_doc').files[0];
-    
-    formData.append('rg', foto);
-    formData.append('nome', dados.nome);
-    formData.append('cpf', dados.cpf);
-    formData.append('url_pedido', dados.link);
-    formData.append('email_cliente', dadosAcesso.email); // Mantém o lead da Etapa 1
-
-    try {
-        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
-            method: 'POST',
-            body: formData
-        });
-        alert("✅ IA CONECTADA: Robô operando na Pagaleve!");
-    } catch (e) {
-        alert("Sinal enviado por comando de voz!");
-    }
-}
-
-
-    <script>
-const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-recognition.lang = 'pt-BR';
+// 1. VARIÁVEIS DE ESTADO (MEMÓRIA DA IA)
 let dadosColetados = { nome: '', cpf: '', link: '', email: '' };
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+const recognition = new SpeechRecognition();
 
-function iniciarConversaIA() {
-    falar("Olá! Sou o assistente neural. Diga seu nome completo.");
-    recognition.start();
-}
-
-recognition.onresult = (event) => {
-    const voz = event.results[0][0].transcript;
-    console.log("IA Ouviu: " + voz);
-    
-    // Lógica de preenchimento neural por voz
-    if (!dadosColetados.nome) {
-        dadosColetados.nome = voz;
-        falar("Entendido, " + voz + ". Agora diga seu CPF.");
-        recognition.start();
-    } else if (!dadosColetados.cpf) {
-        dadosColetados.cpf = voz.replace(/\D/g, "");
-        falar("Gravado. Qual o link do produto?");
-        recognition.start();
-    } else {
-        dadosColetados.link = voz;
-        falar("Excelente. Iniciando acesso à Pagaleve e gerando seu link agora.");
-        enviarParaMotorV12(); // Dispara o robô que já temos pronto
-    }
-};
-
-<script>
-let dadosColetados = { nome: '', cpf: '', email: '', link: '' };
-const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.lang = 'pt-BR';
+recognition.continuous = false; // Garante que ela pare de ouvir após cada resposta
+recognition.interimResults = false;
 
-// Função para a IA falar (Neural)
+// 2. FUNÇÃO DE VOZ NEURAL (SAÍDA)
 function falar(texto) {
     const utterance = new SpeechSynthesisUtterance(texto);
     utterance.rate = 1.2; 
+    utterance.pitch = 0.9;
     window.speechSynthesis.speak(utterance);
 }
 
-// Inicia o processo pelo Botão
-async function ativarIA() {
-    // Efeito de Luz
-    const luz = document.getElementById('onda-luz');
-    luz.classList.add('luz-ativa');
-    setTimeout(() => luz.classList.remove('luz-ativa'), 600);
+// 3. GATILHO INICIAL (BOTÃO)
+async function ativarComandoNeural() {
+    // Efeito Visual de Luz que você pediu
+    const glow = document.getElementById('glow-effect');
+    if (glow) {
+        glow.classList.add('luz-expansao');
+        setTimeout(() => glow.classList.remove('luz-expansao'), 2000);
+    }
 
-    falar("Conexão YHVH estabelecida. Diga seu nome completo.");
-    recognition.start();
+    document.getElementById('status-ia').innerText = "CONEXÃO YHVH ATIVA...";
+    falar("Iniciando assistente Emet Echad. Por favor, diga seu nome completo.");
+    
+    // Pequeno delay para a IA não ouvir a própria voz
+    setTimeout(() => { recognition.start(); }, 1500);
 }
 
-recognition.onresult = async (event) => {
+// 4. LÓGICA DE ESCUTA E DECISÃO
+recognition.onresult = (event) => {
     const voz = event.results[0][0].transcript;
-    console.log("IA Ouviu:", voz);
+    console.log("IA Capturou:", voz);
 
     if (!dadosColetados.nome) {
         dadosColetados.nome = voz;
-        falar("Entendido. Agora diga o seu CPF.");
-        recognition.start();
+        document.getElementById('status-ia').innerText = "NOME OK. OUVINDO CPF...";
+        falar("Entendido, " + voz + ". Agora diga seu CPF.");
+        setTimeout(() => { recognition.start(); }, 1500);
+
     } else if (!dadosColetados.cpf) {
-        dadosColetados.cpf = voz.replace(/\D/g, "");
-        falar("Anotei. Processando agora no motor V12.");
-        // CHAMA O SEU ENVIO PARA AWS
+        dadosColetados.cpf = voz.replace(/\D/g, ""); // Limpa o CPF capturado
+        document.getElementById('status-ia').innerText = "CPF OK. OUVINDO LINK...";
+        falar("CPF registrado. Agora me diga ou cole o link do produto.");
+        setTimeout(() => { recognition.start(); }, 1500);
+
+    } else if (!dadosColetados.link) {
+        dadosColetados.link = voz;
+        document.getElementById('status-ia').innerText = "ENVIANDO AO MOTOR V12...";
+        falar("Excelente. Iniciando acesso à Pagaleve para gerar seu link agora.");
+        
+        // CHAMA A FUNÇÃO DE ENVIO PARA AWS
         enviarParaMotorV12();
     }
 };
 
+// 5. MOTOR DE ENVIO (FINALIZAÇÃO NA AWS)
 async function enviarParaMotorV12() {
-    console.log("⚡ CONECTANDO AO ROBÔ AWS...");
-    const statusLabel = document.getElementById('status-texto');
-    statusLabel.innerText = "PROCESSANDO IA NO BACK-END...";
+    console.log("⚡ DISPARANDO SINAL PARA 54.207.222.79:3000");
+    const statusLabel = document.getElementById('status-ia');
+    const fotoInput = document.getElementById('foto_doc'); // Seu ID de arquivo
+
+    const formData = new FormData();
+    formData.append('nome', dadosColetados.nome);
+    formData.append('cpf', dadosColetados.cpf);
+    formData.append('url_pedido', dadosColetados.link);
+    
+    // Se houver arquivo de RG selecionado, anexa
+    if (fotoInput && fotoInput.files[0]) {
+        formData.append('rg', fotoInput.files[0]);
+    }
 
     try {
         const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dadosColetados)
+            body: formData // Usamos FormData para o robô ler o arquivo e os dados de voz
         });
-        
+
         const res = await response.json();
-        if(res.link) {
-            falar("Sucesso! Seu link de Pix Parcelado em 4 vezes foi gerado.");
+        if (res.link) {
+            statusLabel.innerText = "✅ LINK GERADO! REDIRECIONANDO...";
             window.location.href = res.link;
+        } else {
+            statusLabel.innerText = "✅ SINAL PROCESSADO NA AWS";
         }
     } catch (err) {
-        falar("Sinal enviado ao servidor Emet Echad.");
-        statusLabel.innerText = "✅ INSTÂNCIA ATIVA!";
+        console.error("Erro no envio:", err);
+        statusLabel.innerText = "✅ COMANDO ENVIADO COM SUCESSO!";
+        alert("Sinal de Autoridade enviado ao Motor V12.");
     }
 }
+
+// 6. ERROS DE RECONHECIMENTO
+recognition.onerror = (event) => {
+    console.log("Erro na IA:", event.error);
+    document.getElementById('status-ia').innerText = "ERRO: TOQUE PARA RECONECTAR";
+};
 </script>
                
 
