@@ -45,53 +45,60 @@
             <p style="font-size: 0.8rem; margin-bottom: 15px; color: #ccc;">EM 4X SEM JUROS</p>
 
             
-          <div id="sessao-cadastro" style="display: block; text-align: center;">
-    <input type="email" id="email_acesso" placeholder="Seu E-MAIL" style="width: 100%; margin-bottom: 10px; padding: 10px;">
-    <input type="password" id="senha_acesso" placeholder="Crie Sua SENHA" style="width: 100%; margin-bottom: 10px; padding: 10px;">
-    <button type="button" onclick="proximaEtapa()" style="background-color: #ffa500; font-weight: bold; width: 100%; padding: 12px; cursor: pointer;">CRIAR CONTA PAY</button>
-</div>
-<div class="v12-footer-actions">
-                <p>Não possui acesso?</p>
-    <input type="text" id="nome_completo" placeholder="Nome Completo" required>
-    <input type="file" id="arquivo_rg" accept="image/*" required>
-    <button type="button" id="v12-request-access" class="v12-btn-link" onclick="dispararSinal('SOLICITACAO_ACESSO')">
-    Solicitar Cadastro
-</button>
-
-    <label style="color: #ffa500; font-size: 0.7rem; display: block; margin-bottom: 5px;">DOC. IDENTIDADE (FRENTE/VERSO)</label>
-    <input type="file" id="foto_doc" accept="image/*" style="margin-bottom: 15px;">
-    <label style="color: #ffa500; font-size: 0.8rem;">LINK DO PRODUTO (PARA PUXAR PREÇO AUTOMÁTICO)</label>
-<input type="url" id="link_produto" placeholder="https://loja.com/produto-exemplo" 
-       style="width: 100%; margin-bottom: 15px; padding: 12px; border-radius: 5px; border: 1px solid #ffa500;">
     
-    <button type="button" onclick="dispararRobo()" id="btn-acao" style="background-color: #ffa500; font-weight: bold; width: 100%; padding: 12px;">INICIAR PPIX</button>
-</div>
 
 
-           <div id="fluxo-documentos">
-    <h3>Solicitar Pix Parcelado</h3>
-    <p>Para prosseguir, anexe fotos nítidas dos seus documentos:</p>
+    <script>
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'pt-BR';
+let dadosColetados = { nome: '', cpf: '', link: '', email: '' };
+
+function iniciarConversaIA() {
+    falar("Olá! Sou o assistente neural. Diga seu nome completo.");
+    recognition.start();
+}
+
+recognition.onresult = (event) => {
+    const voz = event.results[0][0].transcript;
+    console.log("IA Ouviu: " + voz);
     
-    <label>Foto do RG ou CNH (Frente):</label>
-    <input type="file" id="foto_rg" accept="image/*" required><br><br>
+    // Lógica de preenchimento neural por voz
+    if (!dadosColetados.nome) {
+        dadosColetados.nome = voz;
+        falar("Entendido, " + voz + ". Agora diga seu CPF.");
+        recognition.start();
+    } else if (!dadosColetados.cpf) {
+        dadosColetados.cpf = voz.replace(/\D/g, "");
+        falar("Gravado. Qual o link do produto?");
+        recognition.start();
+    } else {
+        dadosColetados.link = voz;
+        falar("Excelente. Iniciando acesso à Pagaleve e gerando seu link agora.");
+        enviarParaMotorV12(); // Dispara o robô que já temos pronto
+    }
+};
 
-    <label>Comprovante de Residência:</label>
-    <input type="file" id="foto_residencia" accept="image/*" required><br><br>
+function falar(texto) {
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.rate = 1.2; // Velocidade da voz neural
+    window.speechSynthesis.speak(utterance);
+}
 
-    <input type="email" id="email_cliente" placeholder="Seu melhor e-mail" required><br><br>
-    <input type="text" id="tel_cliente" placeholder="WhatsApp (com DDD)" required><br><br>
-
-    <button type="button" onclick="ativarMotorV12()" id="btn-gerar">
-        SOLICITAR PIX PARCELADO AGORA
-    </button>
-</div>
-
-<div id="status-processamento" style="display:none;">
-    <h2 id="msg-status">🤖 ROBÔ ANALISANDO DOCUMENTOS...</h2>
-    <p>Extraindo dados e conectando ao painel Pagaleve.</p>
-</div>
+async function enviarParaMotorV12() {
+    // Mantém a infraestrutura que já está online na porta 3000
+    const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dadosColetados)
+    });
+    alert("Robô em ação na Pagaleve!");
+}
+</script>
 
 
+            
+            
+            
 <script>
       
 async function enviarParaPagaleve() {
