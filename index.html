@@ -30,6 +30,10 @@
 
     <div id="vanta-bg"></div>
 
+        <label style="color: #ffa500; font-size: 0.8rem;">LINK DO PRODUTO (PARA PUXAR PREÇO AUTOMÁTICO)</label>
+<input type="url" id="link_produto" placeholder="https://loja.com/produto-exemplo" 
+       style="width: 100%; margin-bottom: 15px; padding: 12px; border-radius: 5px; border: 1px solid #ffa500;">
+
     <script type="application/ld+json">
 
 </script>
@@ -44,16 +48,62 @@
             <h2>⚡ PIX PARCELADO</h2>
             <p style="font-size: 0.8rem; margin-bottom: 15px; color: #ccc;">EM 4X SEM JUROS</p>
 
-<div id="neural-interface" style="text-align: center;">
-    <button onclick="iniciarIA()" style="border-radius: 50%; padding: 20px; background: #ffa500;">
-        🎤 FALAR COM IA
-    </button>
-    <p id="feedback-ia">Iniciar o atendimento por voz</p>
+
+<div id="vanta-bg"></div>
+
+<div class="neural-btn-container">
+    <div class="btn-ia-3d" onclick="iniciarIA()">
+        <i class="fas fa-microphone">🎤</i>
+    </div>
+    <p id="feedback-ia" class="status-text">AGUARDANDO COMANDO DE VOZ</p>
+    
+    <div id="inputs-escondidos" style="display:none;">
+        <input type="file" id="foto_doc">
+        <input type="text" id="nome_cliente">
+        <input type="text" id="tel_cliente">
+    </div>
 </div>
 
+<script>
+    // 1. REATIVANDO O UNIVERSO NEURAL 3D
+    VANTA.NET({
+        el: "#vanta-bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0xffa500,
+        backgroundColor: 0x50505,
+        points: 12.00,
+        maxDistance: 22.00,
+        spacing: 16.00
+    });
 
+    // 2. LÓGICA DE VOZ NEURAL (Mantendo o Robô V12)
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'pt-BR';
+    
+    function iniciarIA() {
+        const feedback = document.getElementById('feedback-ia');
+        feedback.innerText = "IA OUVINDO...";
+        
+        const msg = new SpeechSynthesisUtterance("Estou pronta. Diga seu nome e anexe seu RG.");
+        window.speechSynthesis.speak(msg);
+        
+        recognition.start();
+    }
 
-
+    recognition.onresult = (event) => {
+        const voz = event.results[0][0].transcript;
+        document.getElementById('feedback-ia').innerText = "IA PROCESSANDO: " + voz;
+        
+        // Aqui você chama sua função dispararFluxoTotal() que já está pronta
+        // enviando o que a IA capturou para o IP 54.207.222.79:3000
+    };
+</script>
 
 
 
