@@ -236,26 +236,20 @@ async function enviarParaAWS() {
 
 const express = require('express');
 const puppeteer = require('puppeteer');
-const multer = require('multer');
-const Tesseract = require('tesseract.js');
-const cors = require('cors'); // Vital para conectar o site ao servidor
+const cors = require('cors');
 const app = express();
-
-const upload = multer({ dest: 'uploads/' });
 
 app.use(cors());
 app.use(express.json());
 
-app.post('/registrar-completo', upload.single('rg'), async (req, res) => {
-    const dados = req.body; // Dados da voz
-    console.log("⚡ INICIANDO:", dados.nome);
+// SUAS CREDENCIAIS DE AUTORIDADE [MANTIDAS EXATAMENTE]
+const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
+const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
 
-    if (req.file) {
-        try {
-            await Tesseract.recognize(req.file.path, 'por');
-            console.log("OCR Concluído");
-        } catch(e) { console.log("Erro OCR"); }
-    }
+app.post('/registrar-completo', async (req, res) => {
+    const dados = req.body; // Dados que vieram da voz (nome, cpf, valor, etc)
+    
+    console.log("⚡ INICIANDO MOTOR V12 PARA:", dados.nome);
 
     const browser = await puppeteer.launch({ 
         headless: true, 
@@ -264,25 +258,30 @@ app.post('/registrar-completo', upload.single('rg'), async (req, res) => {
 
     try {
         const page = await browser.newPage();
+        
+        // 1. LOGIN NA PAGALEVE [MANTIDO EXATAMENTE]
         await page.goto('https://dashboard.pagaleve.com.br/login');
         await page.type('#email', 'contato@droppfy.com');
         await page.type('#password', '878I@hweH878');
         await page.click("button[type='submit']");
 
-        await page.waitForNavigation({ waitUntil: 'networkidle2' });
+        // 2. CRIAÇÃO DO LINK COM DADOS DA VOZ
+        await page.waitForTimeout(5000); // Aguarda carregar o dashboard
         
-        // Simulação de clique no botão de criar link
+        // Seleciona o botão de criar link
         const [botaoCriar] = await page.$x("//button[contains(., 'Criar link de pagamento')]");
         if (botaoCriar) await botaoCriar.click();
 
+        // Preenche com o que a IA ouviu
         await page.waitForSelector('#customer_name');
-        await page.type('#customer_name', dados.nome || "");
-        await page.type('#customer_cpf', dados.cpf || "");
-        await page.type('#amount', dados.valor || "");
+        await page.type('#customer_name', dados.nome);
+        await page.type('#customer_cpf', dados.cpf);
+        await page.type('#amount', dados.valor); // Valor coletado por voz
         
+        // 3. FINALIZAÇÃO
         await page.click("button[type='submit']");
         
-        // Captura o link
+        // Captura o link gerado para devolver ao front-end
         await page.waitForSelector('.payment-link-url');
         const linkGerado = await page.$eval('.payment-link-url', el => el.innerText);
 
@@ -291,12 +290,12 @@ app.post('/registrar-completo', upload.single('rg'), async (req, res) => {
 
     } catch (error) {
         console.error("Erro no Robô:", error);
-        if(browser) await browser.close();
+        await browser.close();
         res.status(500).json({ status: 'error' });
     }
 });
 
-app.listen(3000, () => console.log("🚀 ONLINE NA PORTA 3000"));
+app.listen(3000, () => console.log("🚀 MOTOR V12 ONLINE NA PORTA 3000"));
     
    
 
