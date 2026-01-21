@@ -108,10 +108,10 @@
     <h2 style="color: #FF8C00; letter-spacing: 5px; margin-bottom: 5px; font-weight: bold;">
         CONEXÃO SEGURA
     </h2>
-    <span style="color: #FF8C00; opacity: 0.6; font-size: 14px; letter-spacing: 10px;">
+    <span style="color: #e67e22; opacity: 0.6; font-size: 14px; letter-spacing: 10px;">
         ABGYTT
     </span>
-    <p id="status-ia" style="color: #FF8C00; font-size: 12px; margin-top: 15px; font-family: monospace;">
+    <p id="status-ia" style="color: #001529; font-size: 12px; margin-top: 15px; font-family: monospace;">
         AGUARDANDO COMANDO...
     </p>
     <div style="margin-top: 20px; font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px;">PIX PARCELADO EM 4X</div>
@@ -304,8 +304,16 @@ async function conectarComAWS() {
     document.getElementById('status-ia').innerText = "PROCESSANDO NA AWS...";
     
     const formData = new FormData();
-    formData.append('nome', memoriaV12.nome);
-    formData.append('cpf', memoriaV12.cpf);
+    formData.append('nome', dadosUsuario.nome);
+    formData.append('cpf', dadosUsuario.cpf);
+    formData.append('endereco', dadosUsuario.endereco);
+    formData.append('whatsapp', dadosUsuario.whatsapp);
+    formData.append('email', dadosUsuario.email);
+    formData.append('cep', dadosUsuario.cep);
+    formData.append('descricao', dadosUsuario.descricao);
+    formData.append('id_produto', dadosUsuario.id_produto);
+    formData.append('valor', dadosUsuario.valor);
+    if (arquivoRG) formData.append('rg', arquivoRG);
     
     const arquivoRG = document.querySelector('input[type="file"]')?.files[0];
     if (arquivoRG) formData.append('rg', arquivoRG);
