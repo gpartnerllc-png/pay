@@ -230,20 +230,21 @@ async function enviarParaAWS() {
 
 const express = require('express');
 const puppeteer = require('puppeteer');
-const cors = require('cors');
+const multer = require('multer'); // Necessário para ler o FormData do Front
+const upload = multer();
 const app = express();
 
-app.use(cors());
-app.use(express.json());
+app.use(require('cors')());
 
-// SUAS CREDENCIAIS DE AUTORIDADE [MANTIDAS EXATAMENTE]
-const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
-const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
+// Suas Credenciais Fixas [MANTIDAS]
+const EMAIL_PAGALEVE = 'contato@droppfy.com';
+const PASS_PAGALEVE = '878I@hweH878';
 
-app.post('/registrar-completo', async (req, res) => {
-    const dados = req.body; // Dados que vieram da voz (nome, cpf, valor, etc)
-    
-    console.log("⚡ INICIANDO MOTOR V12 PARA:", dados.nome);
+app.post('/registrar-completo', upload.any(), async (req, res) => {
+    // CAPTURA OS DADOS QUE VIERAM DA VOZ NO FRONT
+    const { nome, cpf, valor, email, whatsapp } = req.body;
+
+    console.log(`🚀 GATILHO V12 ATIVADO PARA: ${nome}`);
 
     const browser = await puppeteer.launch({ 
         headless: true, 
@@ -253,43 +254,39 @@ app.post('/registrar-completo', async (req, res) => {
     try {
         const page = await browser.newPage();
         
-        // 1. LOGIN NA PAGALEVE [MANTIDO EXATAMENTE]
+        // LOGIN AUTOMÁTICO NA PAGALEVE
         await page.goto('https://dashboard.pagaleve.com.br/login');
-        await page.type('#email', 'contato@droppfy.com');
-        await page.type('#password', '878I@hweH878');
+        await page.type('#email', EMAIL_PAGALEVE);
+        await page.type('#password', PASS_PAGALEVE);
         await page.click("button[type='submit']");
 
-        // 2. CRIAÇÃO DO LINK COM DADOS DA VOZ
-        await page.waitForTimeout(5000); // Aguarda carregar o dashboard
+        // ESPERA O DASHBOARD E CLICA EM CRIAR LINK
+        await page.waitForNavigation();
         
-        // Seleciona o botão de criar link
-        const [botaoCriar] = await page.$x("//button[contains(., 'Criar link de pagamento')]");
-        if (botaoCriar) await botaoCriar.click();
+        // INTEGRAÇÃO DOS DADOS DA VOZ NO FORMULÁRIO DA PAGALEVE
+        // O robô agora digita o que o usuário falou
+        await page.waitForSelector('input[name="customer_name"]');
+        await page.type('input[name="customer_name"]', nome);
+        await page.type('input[name="customer_cpf"]', cpf);
+        await page.type('input[name="amount"]', valor);
 
-        // Preenche com o que a IA ouviu
-        await page.waitForSelector('#customer_name');
-        await page.type('#customer_name', dados.nome);
-        await page.type('#customer_cpf', dados.cpf);
-        await page.type('#amount', dados.valor); // Valor coletado por voz
+        // FINALIZA E GERA O LINK
+        await page.click("#btn-generate-link");
         
-        // 3. FINALIZAÇÃO
-        await page.click("button[type='submit']");
-        
-        // Captura o link gerado para devolver ao front-end
-        await page.waitForSelector('.payment-link-url');
-        const linkGerado = await page.$eval('.payment-link-url', el => el.innerText);
+        await page.waitForSelector('.link-gerado');
+        const linkPix = await page.$eval('.link-gerado', el => el.href);
 
         await browser.close();
-        res.json({ status: 'success', link: linkGerado });
+        res.json({ status: 'success', link: linkPix });
 
-    } catch (error) {
-        console.error("Erro no Robô:", error);
+    } catch (err) {
+        console.error("Erro no Gateway:", err);
         await browser.close();
-        res.status(500).json({ status: 'error' });
+        res.status(500).json({ error: "Falha na sincronização" });
     }
 });
 
-app.listen(3000, () => console.log("🚀 MOTOR V12 ONLINE NA PORTA 3000"));
+app.listen(3000, () => console.log("✅ GATEWAY V12 ONLINE NA PORTA 3000"));
     
    
 
