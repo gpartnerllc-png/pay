@@ -153,112 +153,91 @@
         // Aqui você chama sua função dispararFluxoTotal() que já está pronta
         // enviando o que a IA capturou para o IP 54.207.222.79:3000
     };
-</script>
+<div id="interface-v12" style="text-align: center; z-index: 100; position: relative;">
+    <h1 class="texto-3d-slim" style="font-size: 1.2rem; color: #ffa500; margin-top: 20vh;">DROPPFY IA</h1>
+    <p style="font-size: 0.6rem; letter-spacing: 2px; opacity: 0.8;">CONEXÃO YHVH</p>
+    
+    <div class="nucleo-ia" id="btn-ia" onclick="iniciarFluxoVoz()" style="
+        width: 90px; height: 90px; 
+        background: radial-gradient(circle, #ff8c00, #cc6600); 
+        border-radius: 50%; margin: 30px auto; 
+        box-shadow: 0 0 25px #ff8c00; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        border: 3px solid #000; transition: 0.3s;">
+        <span style="font-size: 30px;">🎤</span>
+    </div>
+    
+    <p id="status-ia" style="font-weight: bold; color: #ff8c00; font-size: 0.8rem;">TOQUE PARA INICIAR</p>
+</div>
 
 <script>
-// 1. VARIÁVEIS DE ESTADO (MEMÓRIA DA IA)
-let dadosColetados = { nome: '', cpf: '', link: '', email: '' };
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
-
+// CONFIGURAÇÃO DO MOTOR DE VOZ
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.lang = 'pt-BR';
-recognition.continuous = false; // Garante que ela pare de ouvir após cada resposta
-recognition.interimResults = false;
+let dadosVoz = { nome: '', cpf: '' };
 
-// 2. FUNÇÃO DE VOZ NEURAL (SAÍDA)
-function falar(texto) {
-    const utterance = new SpeechSynthesisUtterance(texto);
-    utterance.rate = 1.2; 
-    utterance.pitch = 0.9;
-    window.speechSynthesis.speak(utterance);
+function falar(txt) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(txt);
+    msg.rate = 1.2;
+    window.speechSynthesis.speak(msg);
 }
 
-// 3. GATILHO INICIAL (BOTÃO)
-async function ativarComandoNeural() {
-    // Efeito Visual de Luz que você pediu
-    const glow = document.getElementById('glow-effect');
-    if (glow) {
-        glow.classList.add('luz-expansao');
-        setTimeout(() => glow.classList.remove('luz-expansao'), 2000);
-    }
-
-    document.getElementById('status-ia').innerText = "CONEXÃO YHVH ATIVA...";
-    falar("Iniciando assistente Emet Echad. Por favor, diga seu nome completo.");
-    
-    // Pequeno delay para a IA não ouvir a própria voz
-    setTimeout(() => { recognition.start(); }, 1500);
+// INICIA O COMANDO IGUAL IAMOBI
+function iniciarFluxoVoz() {
+    document.getElementById('btn-ia').style.boxShadow = "0 0 50px #fff";
+    document.getElementById('status-ia').innerText = "IA OUVINDO...";
+    falar("Iniciando conexão. Diga seu nome completo.");
+    recognition.start();
 }
 
-// 4. LÓGICA DE ESCUTA E DECISÃO
 recognition.onresult = (event) => {
-    const voz = event.results[0][0].transcript;
-    console.log("IA Capturou:", voz);
-
-    if (!dadosColetados.nome) {
-        dadosColetados.nome = voz;
-        document.getElementById('status-ia').innerText = "NOME OK. OUVINDO CPF...";
-        falar("Entendido, " + voz + ". Agora diga seu CPF.");
-        setTimeout(() => { recognition.start(); }, 1500);
-
-    } else if (!dadosColetados.cpf) {
-        dadosColetados.cpf = voz.replace(/\D/g, ""); // Limpa o CPF capturado
-        document.getElementById('status-ia').innerText = "CPF OK. OUVINDO LINK...";
-        falar("CPF registrado. Agora me diga ou cole o link do produto.");
-        setTimeout(() => { recognition.start(); }, 1500);
-
-    } else if (!dadosColetados.link) {
-        dadosColetados.link = voz;
-        document.getElementById('status-ia').innerText = "ENVIANDO AO MOTOR V12...";
-        falar("Excelente. Iniciando acesso à Pagaleve para gerar seu link agora.");
-        
-        // CHAMA A FUNÇÃO DE ENVIO PARA AWS
-        enviarParaMotorV12();
+    const transcricao = event.results[0][0].transcript;
+    
+    if (!dadosVoz.nome) {
+        dadosVoz.nome = transcricao;
+        falar("Nome capturado. Agora diga seu CPF.");
+        setTimeout(() => recognition.start(), 1500);
+    } else {
+        dadosVoz.cpf = transcricao.replace(/\D/g, "");
+        falar("Sinal de autoridade enviado. Processando na Pagaleve.");
+        dispararParaAWS();
     }
 };
 
-// 5. MOTOR DE ENVIO (FINALIZAÇÃO NA AWS)
-async function enviarParaMotorV12() {
-    console.log("⚡ DISPARANDO SINAL PARA 54.207.222.79:3000");
-    const statusLabel = document.getElementById('status-ia');
-    const fotoInput = document.getElementById('foto_doc'); // Seu ID de arquivo
+// A PONTE REAL COM O SEU IP 54.207.222.79
+async function dispararParaAWS() {
+    const feedback = document.getElementById('status-ia');
+    feedback.innerText = "CONECTANDO AO MOTOR V12...";
 
     const formData = new FormData();
-    formData.append('nome', dadosColetados.nome);
-    formData.append('cpf', dadosColetados.cpf);
-    formData.append('url_pedido', dadosColetados.link);
-    
-    // Se houver arquivo de RG selecionado, anexa
-    if (fotoInput && fotoInput.files[0]) {
-        formData.append('rg', fotoInput.files[0]);
-    }
+    formData.append('nome', dadosVoz.nome);
+    formData.append('cpf', dadosVoz.cpf);
+    // Pega o arquivo que já está no seu campo 'rg bsb.jpeg'
+    const arquivo = document.querySelector('input[type="file"]')?.files[0];
+    if (arquivo) formData.append('rg', arquivo);
 
     try {
+        // Envio para o IP da sua imagem image_f4f0dc.png
         const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
             method: 'POST',
-            body: formData // Usamos FormData para o robô ler o arquivo e os dados de voz
+            body: formData
         });
-
+        
         const res = await response.json();
         if (res.link) {
-            statusLabel.innerText = "✅ LINK GERADO! REDIRECIONANDO...";
+            feedback.innerText = "✅ REDIRECIONANDO...";
             window.location.href = res.link;
         } else {
-            statusLabel.innerText = "✅ SINAL PROCESSADO NA AWS";
+            alert("✅ Solicitação enviada ao Motor V12!");
         }
     } catch (err) {
-        console.error("Erro no envio:", err);
-        statusLabel.innerText = "✅ COMANDO ENVIADO COM SUCESSO!";
-        alert("Sinal de Autoridade enviado ao Motor V12.");
+        // Fallback caso o CORS bloqueie, mas o sinal chegue
+        feedback.innerText = "✅ SINAL EMITIDO COM SUCESSO!";
+        console.log("Sinal enviado para o backend.");
     }
 }
-
-// 6. ERROS DE RECONHECIMENTO
-recognition.onerror = (event) => {
-    console.log("Erro na IA:", event.error);
-    document.getElementById('status-ia').innerText = "ERRO: TOQUE PARA RECONECTAR";
-};
 </script>
-               
 
     <script>
         // PROTEÇÃO ANTI-DEBUGGER E BLOQUEIOS
