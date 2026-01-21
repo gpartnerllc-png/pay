@@ -30,7 +30,7 @@
     /* Texto 3D de Alta Definição */
     .texto-3d {
         font-family: 'Orbitron', sans-serif;
-        font-weight: 900;
+        font-weight: 300;
         color: #fff;
         text-transform: uppercase;
         letter-spacing: 3px;
@@ -54,13 +54,13 @@
     /* Efeito de Luz Neural ao Tocar */
     .luz-ativada {
         position: fixed;
-        top: 50%;
-        left: 50%;
+        top: 30%;
+        left: 30%;
         width: 10px;
         height: 10px;
-        background: radial-gradient(circle, rgba(255,165,0,1) 0%, rgba(255,165,0,0) 70%);
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
+        background: radial-gradient(circle, rgba(155,125,0,1) 0%, rgba(155,125,0,0) 50%);
+        transform: translate(-30%, -30%);
+        border-radius: 30%;
         z-index: 1;
         pointer-events: none;
         transition: all 0.5s ease-out;
@@ -68,15 +68,15 @@
     }
 
     .luz-expansao {
-        width: 800px;
-        height: 800px;
+        width: 300px;
+        height: 300px;
         opacity: 0.6;
     }
 
     /* Ajuste para Android */
     #ui-layer {
-        padding: 20px;
-        max-width: 100%;
+        padding: 10px;
+        max-width: 70%;
     }
 </style>
     
@@ -94,18 +94,18 @@
     <div id="glow-effect" class="luz-ativada"></div>
 
     <div id="ui-layer">
-        <h1 class="texto-3d" style="font-size: 2.2rem; margin-bottom: 5px;">DROPPFY IA</h1>
-        <p style="font-size: 0.7rem; opacity: 0.9; letter-spacing: 4px; color: #ffa500; margin-bottom: 40px;">
+        <h1 class="texto-3d" style="font-size: 1.2rem; margin-bottom: 5px;">DROPPFY IA</h1>
+        <p style="font-size: 0.7rem; opacity: 0.9; letter-spacing: 4px; color: #ffa300; margin-bottom: 30px;">
             CONEXÃO SEGURA YHVH
         </p>
 
         <h2 class="texto-3d" style="font-size: 1.8rem; margin-bottom: 5px;">⚡ PIX PARCELADO</h2>
-        <p style="font-size: 0.9rem; margin-bottom: 35px; color: #fff; font-weight: bold; opacity: 0.7;">EM 4X</p>
+        <p style="font-size: 0.9rem; margin-bottom: 25px; color: #fff; font-weight: bold; opacity: 0.7;">EM 4X</p>
         
         <div class="btn-ia-3d" id="btn-comando" onclick="ativarComandoNeural()">
              <i class="fas fa-microphone">🎤</i>
         </div>
-        <p id="status-ia" style="color: #ffa500; margin-top: 15px; font-weight: bold;">TOQUE PARA FALAR</p>
+        <p id="status-ia" style="color: #ffa300; margin-top: 15px; font-weight: bold;">TOQUE PARA FALAR</p>
 </div>
     
 
