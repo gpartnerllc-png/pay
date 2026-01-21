@@ -135,30 +135,6 @@
         spacing: 16.00
     });
 
-    <script>
-
-const express = require('express');
-const puppeteer = require('puppeteer');
-const cors = require('cors');
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-// SUAS CREDENCIAIS DE AUTORIDADE [MANTIDAS EXATAMENTE]
-const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
-const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
-
-app.post('/registrar-completo', async (req, res) => {
-    const dados = req.body; // Dados que vieram da voz (nome, cpf, valor, etc)
-    
-    console.log("⚡ INICIANDO:", dados.nome);
-
-    const browser = await puppeteer.launch({ 
-        headless: true, 
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] 
-    });
-
 // Objeto de Memória Neural
 let dadosUsuario = { 
     nome: '', cpf: '', endereco: '', whatsapp: '', 
@@ -232,7 +208,7 @@ recognition.onresult = (event) => {
     }
 };
 
-// CONEXÃO COM O MOTOR V12 NA PORTA 3000
+// CONEXÃO NA PORTA 3000
 async function enviarParaAWS() {
     document.getElementById('status-ia').innerText = "ENVIANDO AO IP 54.207.222.79...";
     
@@ -266,7 +242,72 @@ async function enviarParaAWS() {
         document.getElementById('status-ia').innerText = "SINAL ATIVO!";
     }
 }
+const express = require('express');
+const puppeteer = require('puppeteer');
+const cors = require('cors');
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// SUAS CREDENCIAIS DE AUTORIDADE [MANTIDAS EXATAMENTE]
+const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
+const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
+
+app.post('/registrar-completo', async (req, res) => {
+    const dados = req.body; // Dados que vieram da voz (nome, cpf, valor, etc)
+    
+    console.log("⚡ INICIANDO:", dados.nome);
+
+    const browser = await puppeteer.launch({ 
+        headless: true, 
+        args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+    });
+
+    try {
+        const page = await browser.newPage();
+        
+        // 1. LOGIN NA PAGALEVE [MANTIDO EXATAMENTE]
+        await page.goto('https://dashboard.pagaleve.com.br/login');
+        await page.type('#email', 'contato@droppfy.com');
+        await page.type('#password', '878I@hweH878');
+        await page.click("button[type='submit']");
+
+        // 2. CRIAÇÃO DO LINK COM DADOS DA VOZ
+        await page.waitForTimeout(5000); // Aguarda carregar o dashboard
+        
+        // Seleciona o botão de criar link
+        const [botaoCriar] = await page.$x("//button[contains(., 'Criar link de pagamento')]");
+        if (botaoCriar) await botaoCriar.click();
+
+        // Preenche com o que a IA ouviu
+        await page.waitForSelector('#customer_name');
+        await page.type('#customer_name', dados.nome);
+        await page.type('#customer_cpf', dados.cpf);
+        await page.type('#amount', dados.valor); // Valor coletado por voz
+        
+        // 3. FINALIZAÇÃO
+        await page.click("button[type='submit']");
+        
+        // Captura o link gerado para devolver ao front-end
+        await page.waitForSelector('.payment-link-url');
+        const linkGerado = await page.$eval('.payment-link-url', el => el.innerText);
+
+        await browser.close();
+        res.json({ status: 'success', link: linkGerado });
+
+    } catch (error) {
+        console.error("Erro no Robô:", error);
+        await browser.close();
+        res.status(500).json({ status: 'error' });
+    }
+});
+
+app.listen(3000, () => console.log("🚀 EMIT ONLINE NA PORTA 3000"));
+
 </script>
+
+    <script>
 
     async function enviarParaAWS() {
         document.getElementById('status-ia').innerText = "CONECTANDO EMET ECHAD SETER...";
