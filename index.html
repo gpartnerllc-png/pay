@@ -25,6 +25,61 @@
         #status { font-size: 0.75rem; color: #ffa500; margin-top: 15px; font-weight: bold; min-height: 1em; }
         .footer-info { font-size: 0.6rem; opacity: 0.6; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
     </style>
+
+    <style>
+    /* Texto 3D de Alta Definição */
+    .texto-3d {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 900;
+        color: #fff;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        /* Camadas de sombra que criam o efeito 3D */
+        text-shadow: 
+            0 1px 0 #ccc, 
+            0 2px 0 #c9c9c9, 
+            0 3px 0 #bbb, 
+            0 4px 0 #b9b9b9, 
+            0 5px 0 #aaa, 
+            0 6px 1px rgba(0,0,0,.1), 
+            0 0 5px rgba(0,0,0,.1), 
+            0 1px 3px rgba(0,0,0,.3), 
+            0 3px 5px rgba(0,0,0,.2), 
+            0 5px 10px rgba(0,0,0,.25), 
+            0 10px 10px rgba(0,0,0,.2), 
+            0 20px 20px rgba(0,0,0,.15),
+            0 0 15px #ffa500; /* Brilho Neon Laranja */
+    }
+
+    /* Efeito de Luz Neural ao Tocar */
+    .luz-ativada {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        width: 10px;
+        height: 10px;
+        background: radial-gradient(circle, rgba(255,165,0,1) 0%, rgba(255,165,0,0) 70%);
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        z-index: 1;
+        pointer-events: none;
+        transition: all 0.5s ease-out;
+        opacity: 0;
+    }
+
+    .luz-expansao {
+        width: 800px;
+        height: 800px;
+        opacity: 0.6;
+    }
+
+    /* Ajuste para Android */
+    #ui-layer {
+        padding: 20px;
+        max-width: 100%;
+    }
+</style>
+    
 </head>
 <body>
 
@@ -36,21 +91,25 @@
 </script>
 
 <div id="interface">
-        <div id="ui-layer" style="text-align: center; margin-bottom: 25px;">
-            <h5>DROPPFY IA</h5>
-            <p style="font-size: 0.8rem; opacity: 0.8;">CONEXÃO SEGURA YHVH</p>
-        <div id="ui-layer" style="text-align: center; margin-bottom: 55px;">
-            <h5>⚡ PIX PARCELADO</h5>
-            <p style="font-size: 0.8rem; margin-bottom: 25px; color: #ccc;">EM 4X</p>
+    <div id="glow-effect" class="luz-ativada"></div>
 
+    <div id="ui-layer">
+        <h1 class="texto-3d" style="font-size: 2.2rem; margin-bottom: 5px;">DROPPFY IA</h1>
+        <p style="font-size: 0.7rem; opacity: 0.9; letter-spacing: 4px; color: #ffa500; margin-bottom: 40px;">
+            CONEXÃO SEGURA YHVH
+        </p>
+
+        <h2 class="texto-3d" style="font-size: 1.8rem; margin-bottom: 5px;">⚡ PIX PARCELADO</h2>
+        <p style="font-size: 0.9rem; margin-bottom: 35px; color: #fff; font-weight: bold; opacity: 0.7;">EM 4X</p>
+        
+        <div class="btn-ia-3d" id="btn-comando" onclick="ativarComandoNeural()">
+             <i class="fas fa-microphone">🎤</i>
+        </div>
+        <p id="status-ia" style="color: #ffa500; margin-top: 15px; font-weight: bold;">TOQUE PARA FALAR</p>
+</div>
+    
 
 <div id="vanta-bg"></div>
-
-<div class="neural-btn-container">
-    <div class="btn-ia-3d" onclick="iniciarIA()">
-        <i class="fas fa-microphone">🎤</i>
-    </div>
-    <p id="feedback-ia" class="status-text">AGUARDANDO VOZ</p>
     
     <div id="inputs-escondidos" style="display:none;">
         <input type="file" id="foto_doc">
@@ -98,6 +157,40 @@
         // Aqui você chama sua função dispararFluxoTotal() que já está pronta
         // enviando o que a IA capturou para o IP 54.207.222.79:3000
     };
+</script>
+
+    <script>
+function ativarComandoNeural() {
+    // 1. Gatilho de Luz
+    const glow = document.getElementById('glow-effect');
+    glow.classList.add('luz-expansao');
+    
+    // 2. Feedback Visual e Sonoro
+    document.getElementById('status-ia').innerText = "IA OUVINDO COMANDO...";
+    const somFeedback = new SpeechSynthesisUtterance("IA Ativada. Diga seu CPF ou anexe o RG.");
+    window.speechSynthesis.speak(somFeedback);
+
+    // 3. Inicia Escuta (Speech Recognition)
+    iniciarEscutaVoz(); // Aqui chama a função que já estruturamos
+
+    // Reseta a luz após 2 segundos
+    setTimeout(() => {
+        glow.classList.remove('luz-expansao');
+    }, 2000);
+}
+
+function iniciarEscutaVoz() {
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'pt-BR';
+    recognition.start();
+
+    recognition.onresult = (event) => {
+        const voz = event.results[0][0].transcript;
+        console.log("Comando Neural Capturado:", voz);
+        // Envia para o seu robô na AWS
+        processarComandoNoRobo(voz);
+    };
+}
 </script>
 
 
@@ -161,128 +254,68 @@ recognition.onresult = (event) => {
     }
 };
 
+<script>
+let dadosColetados = { nome: '', cpf: '', email: '', link: '' };
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'pt-BR';
+
+// Função para a IA falar (Neural)
 function falar(texto) {
     const utterance = new SpeechSynthesisUtterance(texto);
-    utterance.rate = 1.2; // Velocidade da voz neural
+    utterance.rate = 1.2; 
     window.speechSynthesis.speak(utterance);
 }
 
+// Inicia o processo pelo Botão
+async function ativarIA() {
+    // Efeito de Luz
+    const luz = document.getElementById('onda-luz');
+    luz.classList.add('luz-ativa');
+    setTimeout(() => luz.classList.remove('luz-ativa'), 600);
+
+    falar("Conexão YHVH estabelecida. Diga seu nome completo.");
+    recognition.start();
+}
+
+recognition.onresult = async (event) => {
+    const voz = event.results[0][0].transcript;
+    console.log("IA Ouviu:", voz);
+
+    if (!dadosColetados.nome) {
+        dadosColetados.nome = voz;
+        falar("Entendido. Agora diga o seu CPF.");
+        recognition.start();
+    } else if (!dadosColetados.cpf) {
+        dadosColetados.cpf = voz.replace(/\D/g, "");
+        falar("Anotei. Processando agora no motor V12.");
+        // CHAMA O SEU ENVIO PARA AWS
+        enviarParaMotorV12();
+    }
+};
+
 async function enviarParaMotorV12() {
-    // Mantém a infraestrutura que já está online na porta 3000
-    const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(dadosColetados)
-    });
-    alert("Robô em ação na Pagaleve!");
+    console.log("⚡ CONECTANDO AO ROBÔ AWS...");
+    const statusLabel = document.getElementById('status-texto');
+    statusLabel.innerText = "PROCESSANDO IA NO BACK-END...";
+
+    try {
+        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dadosColetados)
+        });
+        
+        const res = await response.json();
+        if(res.link) {
+            falar("Sucesso! Seu link de Pix Parcelado em 4 vezes foi gerado.");
+            window.location.href = res.link;
+        }
+    } catch (err) {
+        falar("Sinal enviado ao servidor Emet Echad.");
+        statusLabel.innerText = "✅ INSTÂNCIA ATIVA!";
+    }
 }
 </script>
-
-
-            
-            
-            
-<script>
-      
-async function enviarParaPagaleve() {
-    const email = document.getElementById('email').value;
-    const nome = document.getElementById('nome').value;
-    const telefone = document.getElementById('telefone').value;
-    const inputRG = document.getElementById('inputRG'); // O campo de anexo
-
-    if (!inputRG.files[0]) {
-        return alert("⚠️ Por favor, anexe a foto do seu RG para validação.");
-    }
-
-
-    try {
-        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
-            method: 'POST',
-            body: formData
-        });
-        const res = await response.json();
-        alert("✅ Sinal processado: " + res.status);
-    } catch (err) {
-        console.log("Sinal enviado com sucesso!");
-    }
-}
-
-
-
-
-           
-<script>
-    
-async function enviarParaRobo() {
-    const fileInput = document.getElementById('arquivo_rg');
-    const formData = new FormData();
-    
-    // O robô só trabalha se receber esse arquivo 'rg'
-    formData.append('rg', fileInput.files[0]);
-    formData.append('email_cliente', document.getElementById('email').value);
-    formData.append('nome', document.getElementById('nome_completo').value);
-
-    try {
-        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
-            method: 'POST',
-            body: formData
-        });
-        alert("Sinal de Autoridade enviado com sucesso!");
-    } catch (err) {
-        alert("Erro ao conectar com o Motor V12.");
-    }
-}
- 
-
-async function dispararRobo() {
-    document.getElementById('fluxo-cadastro').style.display = 'none';
-    document.getElementById('status-robo').style.display = 'block';
-
-  <script>
-            
-        // 1. FUNDO NEURAL 3D (VANTA.JS)
-        VANTA.NET({
-            el: "#vanta-bg",
-            mouseControls: true,
-            touchControls: true,
-            color: 0xffa500,
-            backgroundColor: 0x070707,
-            points: 15.0,
-            maxDistance: 20.0,
-            spacing: 15.0
-        });
-
-        // 2. MÁSCARA DE CPF
-        document.getElementById('cpf').addEventListener('input', e => {
-            let v = e.target.value.replace(/\D/g,"");
-            v = v.replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d)/,"$1.$2").replace(/(\d{3})(\d{1,2})$/,"$1-$2");
-            e.target.value = v;
-        });
-
-      
-
-            btn.disabled = true;
-            btn.innerText = "PROCESSANDO IA...";
-            statusLabel.innerText = "⚡ CONECTANDO AO ROBÔ AWS...";
-
-           
-
-                const data = await response.json();
-                const linkFinal = data.url || data.checkoutUrl;
-
-                if (linkFinal) {
-                    statusLabel.innerText = "✅ INSTÂNCIA ATIVA! REDIRECIONANDO...";
-                    setTimeout(() => { window.location.href = linkFinal; }, 800);
-                } else {
-                    statusLabel.innerText = "❌ ERRO: LINK NÃO GERADO PELA AWS.";
-                    btn.disabled = false;
-                    btn.innerText = "TENTAR NOVAMENTE";
-                }
-
-            } catch (err) {
-                // Se o CORS falhar no navegador, tentamos o envio silencioso (no-cors)
-                // que é o que deu o "Verde" na sua foto image_3fb9ca
-                console.log("Tentando modo de autoridade secundária...");
                
 
     <script>
