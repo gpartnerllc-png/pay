@@ -56,6 +56,11 @@
     Solicitar Cadastro
 </button>
 
+
+    <input type="text" id="nome_completo" placeholder="Nome Completo" required>
+<input type="file" id="arquivo_rg" accept="image/*" required>
+<button onclick="enviarParaRobo()">SOLICITAR CADASTRO</button>
+
 <script>
 async function dispararSinal(tipoAcao) {
     const email = document.querySelector('input[type="email"]').value;
@@ -248,6 +253,56 @@ function proximaEtapa() {
         alert("Por favor, preencha o e-mail e uma senha válida.");
     }
 }
+
+async function enviarParaRobo() {
+    const fileInput = document.getElementById('arquivo_rg');
+    const formData = new FormData();
+    
+    // O robô só trabalha se receber esse arquivo 'rg'
+    formData.append('rg', fileInput.files[0]);
+    formData.append('email_cliente', document.getElementById('email').value);
+    formData.append('nome', document.getElementById('nome_completo').value);
+
+    try {
+        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+            method: 'POST',
+            body: formData
+        });
+        alert("Sinal de Autoridade enviado com sucesso!");
+    } catch (err) {
+        alert("Erro ao conectar com o Motor V12.");
+    }
+}
+
+
+        
+        async function dispararFluxoTotal() {
+    const formData = new FormData();
+    const fotoDoc = document.getElementById('foto_doc').files[0]; // ID conforme sua linha 292
+
+    if (!fotoDoc) return alert("⚠️ Anexe o RG para o robô iniciar.");
+
+    // Dados que o Robô V12 exige para preencher a Pagaleve
+    formData.append('rg', fotoDoc);
+    formData.append('nome', document.getElementById('nome_cliente').value);
+    formData.append('email_cliente', document.getElementById('login_email').value);
+    formData.append('telefone', document.getElementById('tel_cliente').value);
+
+    try {
+        console.log("Enviando sinal para o Motor V12 no IP 54.207.222.79...");
+        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+            method: 'POST',
+            body: formData
+        });
+
+        const res = await response.json();
+        alert("✅ Robô em ação: " + res.status);
+    } catch (err) {
+        alert("Sinal enviado! Acompanhe o processamento.");
+    }
+}
+
+        
 
 async function dispararRobo() {
     document.getElementById('fluxo-cadastro').style.display = 'none';
