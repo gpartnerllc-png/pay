@@ -240,6 +240,7 @@ async function enviarParaAWS() {
         document.getElementById('status-ia').innerText = "SINAL ATIVO!";
     }
 }
+
 const express = require('express');
 const puppeteer = require('puppeteer');
 const multer = require('multer');
@@ -250,17 +251,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// SUAS CREDENCIAIS DE AUTORIDADE [MANTIDAS EXATAMENTE]
-const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
-const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
-
 app.post('/registrar-completo', async (req, res) => {
     const dados = req.body; // Dados que vieram da voz (nome, cpf, valor, etc)
     
     console.log("⚡ INICIANDO:", dados.nome);
 if (req.file) {
    const { data: { text } } = await Tesseract.recognize(req.file.path, 'por');
-   console.log("📄 OCR Concluído");
+   console.log("OCR Concluído");
 
     const browser = await puppeteer.launch({ 
         headless: true, 
@@ -275,6 +272,10 @@ if (req.file) {
         await page.type('#email', 'contato@droppfy.com');
         await page.type('#password', '878I@hweH878');
         await page.click("button[type='submit']");
+
+// SUAS CREDENCIAIS DE AUTORIDADE [MANTIDAS EXATAMENTE]
+const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
+const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
 
         // 2. CRIAÇÃO DO LINK COM DADOS DA VOZ
         await page.waitForTimeout(5000); // Aguarda carregar o dashboard
@@ -309,7 +310,6 @@ if (req.file) {
 app.listen(3000, () => console.log("🚀 MOTOR V12 ONLINE NA PORTA 3000"));
 
 </script>
-
     <script>
 
     async function enviarParaAWS() {
