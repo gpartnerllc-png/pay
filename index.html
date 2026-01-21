@@ -13,8 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
-
-
+        
     
     <style>
         body { margin: 0; background: #070707; overflow: hidden; font-family: 'Segoe UI', sans-serif; color: #fff; height: 100vh; }
@@ -110,14 +109,14 @@
         </div>
     </div>
 
-  <script>  
-      
-<div id="vanta-bg"></div>
+  <div id="vanta-bg" style="width: 100%; height: 100vh; position: fixed; z-index: -1;"></div>
 <div id="glow-effect" class="luz-neural-dark"></div>
 
+
+<script>
     // Inicializa o Fundo Neural Vivo
     VANTA.NET({
-        el: "#vanta-canvas",
+        el: "#vanta-bg",
         mouseControls: true,
         touchControls: true,
         gyroControls: false,
@@ -125,19 +124,19 @@
         minWidth: 200.00,
         scale: 1.00,
         scaleMobile: 1.00,
-        color: 0xff8c00, // Laranja Neural
-        backgroundColor: 0x0, // Preto Profundo
+        color: 0xff8c00,
+        backgroundColor: 0x0,
         points: 12.00,
         maxDistance: 20.00,
         spacing: 16.00
     });
 
-<script>
-// Objeto de Memória Neural - MANTIDO EXATAMENTE
-let dadosUsuario = { 
-    nome: '', cpf: '', endereco: '', whatsapp: '', 
-    email: '', cep: '', descricao: '', id_produto: '', valor: '' 
-};
+    // Memória Neural
+    let dadosUsuario = { 
+        nome: '', cpf: '', endereco: '', whatsapp: '', 
+        email: '', cep: '', descricao: '', id_produto: '', valor: '' 
+    };
+
 
 const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
 recognition.lang = 'pt-BR';
@@ -207,12 +206,10 @@ recognition.onresult = (event) => {
 };
 
 async function enviarParaAWS() {
-        document.getElementById('status-ia').innerText = "CONECTANDO AO MOTOR V12...";
-        
+        document.getElementById('status-ia').innerText = "CONECTANDO...";
         const formData = new FormData();
-        formData.append('nome', dadosUsuario.nome);
-        formData.append('cpf', dadosUsuario.cpf);
-        // Tenta pegar o arquivo se ele existir na página
+        Object.keys(dadosUsuario).forEach(key => formData.append(key, dadosUsuario[key]));
+        
         const fileInput = document.querySelector('input[type="file"]');
         if(fileInput && fileInput.files[0]) formData.append('rg', fileInput.files[0]);
 
@@ -224,26 +221,26 @@ async function enviarParaAWS() {
             const res = await response.json();
             if(res.link) window.location.href = res.link;
         } catch (err) {
-            document.getElementById('status-ia').innerText = "SINAL EMITIDO COM SUCESSO!";
+            document.getElementById('status-ia').innerText = "SINAL ATIVO!";
         }
     }
 
 const express = require('express');
 const puppeteer = require('puppeteer');
-const multer = require('multer'); // Necessário para ler o FormData do Front
-const upload = multer();
+const multer = require('multer');
+const cors = require('cors'); // Vital para autoridade de conexão
 const app = express();
+const upload = multer();
 
-app.use(require('cors')());
+app.use(cors());
+app.use(express.json());
 
-// Suas Credenciais Fixas [MANTIDAS]
 const EMAIL_PAGALEVE = 'contato@droppfy.com';
 const PASS_PAGALEVE = '878I@hweH878';
 
 app.post('/registrar-completo', upload.any(), async (req, res) => {
-    // CAPTURA OS DADOS QUE VIERAM DA VOZ NO FRONT
-    const { nome, cpf, valor, email, whatsapp } = req.body;
-
+    // Agora o multer permite ler os dados do seu FormData corretamente
+    const { nome, cpf, valor } = req.body;
     console.log(`🚀 GATILHO V12 ATIVADO PARA: ${nome}`);
 
     const browser = await puppeteer.launch({ 
@@ -253,35 +250,31 @@ app.post('/registrar-completo', upload.any(), async (req, res) => {
 
     try {
         const page = await browser.newPage();
-        
-        // LOGIN AUTOMÁTICO NA PAGALEVE
         await page.goto('https://dashboard.pagaleve.com.br/login');
         await page.type('#email', EMAIL_PAGALEVE);
         await page.type('#password', PASS_PAGALEVE);
         await page.click("button[type='submit']");
 
-        // ESPERA O DASHBOARD E CLICA EM CRIAR LINK
-        await page.waitForNavigation();
+        await page.waitForNavigation({ waitUntil: 'networkidle2' });
         
-        // INTEGRAÇÃO DOS DADOS DA VOZ NO FORMULÁRIO DA PAGALEVE
-        // O robô agora digita o que o usuário falou
+        // O robô preenche o formulário com o que veio da voz
         await page.waitForSelector('input[name="customer_name"]');
-        await page.type('input[name="customer_name"]', nome);
-        await page.type('input[name="customer_cpf"]', cpf);
-        await page.type('input[name="amount"]', valor);
+        await page.type('input[name="customer_name"]', nome || "");
+        await page.type('input[name="customer_cpf"]', cpf || "");
+        await page.type('input[name="amount"]', valor || "");
 
-        // FINALIZA E GERA O LINK
-        await page.click("#btn-generate-link");
+        // Gera o link (ajuste o seletor conforme o site da Pagaleve)
+        await page.click("button.btn-primary"); 
         
-        await page.waitForSelector('.link-gerado');
-        const linkPix = await page.$eval('.link-gerado', el => el.href);
+        await page.waitForSelector('.payment-link', { timeout: 10000 });
+        const linkPix = await page.$eval('.payment-link', el => el.innerText);
 
         await browser.close();
         res.json({ status: 'success', link: linkPix });
 
     } catch (err) {
-        console.error("Erro no Gateway:", err);
-        await browser.close();
+        console.error("Erro no Gateway:", err.message);
+        if(browser) await browser.close();
         res.status(500).json({ error: "Falha na sincronização" });
     }
 });
