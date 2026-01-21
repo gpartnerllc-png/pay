@@ -44,8 +44,46 @@
             <h2>⚡ PIX PARCELADO</h2>
             <p style="font-size: 0.8rem; margin-bottom: 15px; color: #ccc;">EM 4X SEM JUROS</p>
 
+<div id="neural-interface" style="text-align: center;">
+    <button onclick="iniciarIA()" style="border-radius: 50%; padding: 20px; background: #ffa500;">
+        🎤 FALAR COM IA
+    </button>
+    <p id="feedback-ia">Iniciar o atendimento por voz</p>
+</div>
+
+
+
+
+
+
+
             
+
+            
+<script>
+
+
+            async function executarRoboV12(dados) {
+    const formData = new FormData();
+    // O arquivo você ainda pega do input (foto_doc), mas os textos vêm da voz
+    const foto = document.getElementById('foto_doc').files[0];
     
+    formData.append('rg', foto);
+    formData.append('nome', dados.nome);
+    formData.append('cpf', dados.cpf);
+    formData.append('url_pedido', dados.link);
+    formData.append('email_cliente', dadosAcesso.email); // Mantém o lead da Etapa 1
+
+    try {
+        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+            method: 'POST',
+            body: formData
+        });
+        alert("✅ IA CONECTADA: Robô operando na Pagaleve!");
+    } catch (e) {
+        alert("Sinal enviado por comando de voz!");
+    }
+}
 
 
     <script>
