@@ -89,14 +89,17 @@
             <button class="btn-mic" onclick="iniciarVoz()">
                 <img src="https://cdn-icons-png.flaticon.com/512/25/25682.png" width="30" style="filter: invert(1);">
             </button>
-
-            <button class="btn-comando" onclick="iniciarVoz()">
-                Toque para iniciar comando de voz<br>
-                <small style="opacity: 0.8;">Conexão Segura YHVH</small>
-            </button>
-
-            <div id="status-ia">Aguardando comando...</div>
-            <div style="margin-top: 20px; font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Solicitar novo cadastro de operador</div>
+            <div id="gatilho-v12" onclick="iniciarVoz()" style="cursor: pointer; text-align: center; padding: 20px; transition: all 0.5s;">
+    <h2 style="color: #FF8C00; letter-spacing: 5px; margin-bottom: 5px; font-weight: bold;">
+        CONEXÃO SEGURA YHVH
+    </h2>
+    <span style="color: #ffffff; opacity: 0.6; font-size: 14px; letter-spacing: 10px;">
+        ABGYTT
+    </span>
+    <p id="status-ia" style="color: #00FF00; font-size: 12px; margin-top: 15px; font-family: monospace;">
+        AGUARDANDO COMANDO...
+    </p>
+    <div style="margin-top: 20px; font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px;">PIX PARCELADO EM 4X</div>
         </div>
     </div>
 
@@ -137,6 +140,7 @@ function falar(texto) {
     window.speechSynthesis.cancel();
     const msg = new SpeechSynthesisUtterance(texto);
     msg.rate = 1.2;
+    msg.pitch = 1.0;
     window.speechSynthesis.speak(msg);
 }
 
@@ -153,42 +157,42 @@ recognition.onresult = (event) => {
     if (!dadosUsuario.nome) {
         dadosUsuario.nome = resultado;
         falar("Nome capturado. Agora diga seu CPF.");
-        setTimeout(() => recognition.start(), 1500);
+        setTimeout(() => recognition.start(), 5000);
     } 
     else if (!dadosUsuario.cpf) {
         dadosUsuario.cpf = resultado.replace(/\D/g, "");
         falar("CPF capturado. Agora diga seu ENDEREÇO COMPLETO.");
-        setTimeout(() => recognition.start(), 1500);
+        setTimeout(() => recognition.start(), 5000);
     } 
     else if (!dadosUsuario.endereco) {
         dadosUsuario.endereco = resultado;
         falar("Endereço capturado. Agora diga seu NUMERO DE WHATSAPP.");
-        setTimeout(() => recognition.start(), 1500);
+        setTimeout(() => recognition.start(), 5000);
     } 
     else if (!dadosUsuario.whatsapp) {
         dadosUsuario.whatsapp = resultado.replace(/\D/g, "");
         falar("Whatsapp capturado. Agora diga seu E-mail.");
-        setTimeout(() => recognition.start(), 1500);
+        setTimeout(() => recognition.start(), 5000);
     } 
     else if (!dadosUsuario.email) {
         dadosUsuario.email = resultado;
         falar("E-mail capturado. Agora diga seu CEP.");
-        setTimeout(() => recognition.start(), 1500);
+        setTimeout(() => recognition.start(), 5000);
     } 
     else if (!dadosUsuario.cep) {
         dadosUsuario.cep = resultado.replace(/\D/g, "");
         falar("CEP capturado. Agora diga a descrição do produto.");
-        setTimeout(() => recognition.start(), 1500);
+        setTimeout(() => recognition.start(), 5000);
     } 
     else if (!dadosUsuario.descricao) {
         dadosUsuario.descricao = resultado;
         falar("Descrição capturada. Agora diga o ID DO PRODUTO.");
-        setTimeout(() => recognition.start(), 1500);
+        setTimeout(() => recognition.start(), 5000);
     } 
     else if (!dadosUsuario.id_produto) {
         dadosUsuario.id_produto = resultado;
         falar("ID capturado. Agora diga o VALOR DO PRODUTO.");
-        setTimeout(() => recognition.start(), 1500);
+        setTimeout(() => recognition.start(), 5000);
     } 
     else if (!dadosUsuario.valor) {
         dadosUsuario.valor = resultado;
@@ -233,7 +237,7 @@ const PASS_PAGALEVE = '878I@hweH878';
 app.post('/registrar-completo', upload.any(), async (req, res) => {
     // Agora o multer permite ler os dados do seu FormData corretamente
     const { nome, cpf, valor } = req.body;
-    console.log(`🚀 GATILHO V12 ATIVADO PARA: ${nome}`);
+    console.log(`🚀 GATILHO ATIVADO: ${nome}`);
 
     const browser = await puppeteer.launch({ 
         headless: true, 
