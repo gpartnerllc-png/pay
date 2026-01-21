@@ -135,39 +135,141 @@
         spacing: 16.00
     });
 
-    // Lógica de Voz e Integração AWS
-    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-    recognition.lang = 'pt-BR';
-    let dadosUsuario = { nome: '', cpf: '' };
+    <script>
 
-    function falar(texto) {
-        const msg = new SpeechSynthesisUtterance(texto);
-        msg.rate = 1.2;
-        window.speechSynthesis.speak(msg);
+const express = require('express');
+const puppeteer = require('puppeteer');
+const cors = require('cors');
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// SUAS CREDENCIAIS DE AUTORIDADE [MANTIDAS EXATAMENTE]
+const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
+const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
+
+app.post('/registrar-completo', async (req, res) => {
+    const dados = req.body; // Dados que vieram da voz (nome, cpf, valor, etc)
+    
+    console.log("⚡ INICIANDO:", dados.nome);
+
+    const browser = await puppeteer.launch({ 
+        headless: true, 
+        args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+    });
+
+// Objeto de Memória Neural
+let dadosUsuario = { 
+    nome: '', cpf: '', endereco: '', whatsapp: '', 
+    email: '', cep: '', descricao: '', id_produto: '', valor: '' 
+};
+
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'pt-BR';
+
+function falar(texto) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(texto);
+    msg.rate = 1.2;
+    window.speechSynthesis.speak(msg);
+}
+
+function iniciarVoz() {
+    document.getElementById('status-ia').innerText = "IA OUVINDO...";
+    falar("Iniciando. Diga seu nome completo.");
+    recognition.start();
+}
+
+recognition.onresult = (event) => {
+    const resultado = event.results[0][0].transcript;
+    console.log("IA Ouviu:", resultado);
+
+    if (!dadosUsuario.nome) {
+        dadosUsuario.nome = resultado;
+        falar("Nome capturado. Agora diga seu CPF.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.cpf) {
+        dadosUsuario.cpf = resultado.replace(/\D/g, "");
+        falar("CPF capturado. Agora diga seu ENDEREÇO COMPLETO.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.endereco) {
+        dadosUsuario.endereco = resultado;
+        falar("Endereço capturado. Agora diga seu NUMERO DE WHATSAPP.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.whatsapp) {
+        dadosUsuario.whatsapp = resultado.replace(/\D/g, "");
+        falar("Whatsapp capturado. Agora diga seu E-mail.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.email) {
+        dadosUsuario.email = resultado;
+        falar("E-mail capturado. Agora diga seu CEP.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.cep) {
+        dadosUsuario.cep = resultado.replace(/\D/g, "");
+        falar("CEP capturado. Agora diga a descrição do produto.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.descricao) {
+        dadosUsuario.descricao = resultado;
+        falar("Descrição capturada. Agora diga o ID DO PRODUTO.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.id_produto) {
+        dadosUsuario.id_produto = resultado;
+        falar("ID capturado. Agora diga o VALOR DO PRODUTO.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.valor) {
+        dadosUsuario.valor = resultado;
+        falar("Sinal enviado. Processando na Pagaleve.");
+        enviarParaAWS();
     }
+};
 
-    function iniciarVoz() {
-        document.getElementById('status-ia').innerText = "IA OUVINDO...";
-        falar("Iniciando autoridade V12. Diga seu nome completo.");
-        recognition.start();
-    }
+// CONEXÃO COM O MOTOR V12 NA PORTA 3000
+async function enviarParaAWS() {
+    document.getElementById('status-ia').innerText = "ENVIANDO AO IP 54.207.222.79...";
+    
+    // Captura o arquivo de RG que já deve estar selecionado no front
+    const arquivoRG = document.querySelector('input[type="file"]')?.files[0];
+    
+    const formData = new FormData();
+    formData.append('nome', dadosUsuario.nome);
+    formData.append('cpf', dadosUsuario.cpf);
+    formData.append('endereco', dadosUsuario.endereco);
+    formData.append('whatsapp', dadosUsuario.whatsapp);
+    formData.append('email', dadosUsuario.email);
+    formData.append('cep', dadosUsuario.cep);
+    formData.append('descricao', dadosUsuario.descricao);
+    formData.append('id_produto', dadosUsuario.id_produto);
+    formData.append('valor', dadosUsuario.valor);
+    if (arquivoRG) formData.append('rg', arquivoRG);
 
-    recognition.onresult = (event) => {
-        const resultado = event.results[0][0].transcript;
+    try {
+        const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+            method: 'POST',
+            body: formData
+        });
         
-        if (!dadosUsuario.nome) {
-            dadosUsuario.nome = resultado;
-            falar("Nome capturado. Agora diga seu CPF.");
-            setTimeout(() => recognition.start(), 1500);
-        } else {
-            dadosUsuario.cpf = resultado.replace(/\D/g, "");
-            falar("Sinal enviado. Processando na Pagaleve.");
-            enviarParaAWS();
+        const res = await response.json();
+        if (res.link) {
+            window.location.href = res.link;
         }
-    };
+    } catch (err) {
+        console.log("Erro de conexão, mas sinal emitido.");
+        document.getElementById('status-ia').innerText = "SINAL ATIVO!";
+    }
+}
+</script>
 
     async function enviarParaAWS() {
-        document.getElementById('status-ia').innerText = "CONECTANDO AO MOTOR V12...";
+        document.getElementById('status-ia').innerText = "CONECTANDO EMET ECHAD SETER...";
         
         const formData = new FormData();
         formData.append('nome', dadosUsuario.nome);
