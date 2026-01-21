@@ -206,14 +206,93 @@ recognition.onresult = (event) => {
     }
 };
 
-// CONEXÃO NA PORTA 3000
+<script>
+// Objeto de Memória Neural - Mantido Exatamente
+let dadosUsuario = { 
+    nome: '', cpf: '', endereco: '', whatsapp: '', 
+    email: '', cep: '', descricao: '', id_produto: '', valor: '' 
+};
+
+// Credenciais de Autoridade Pagaleve
+const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
+const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
+
+const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+recognition.lang = 'pt-BR';
+
+function falar(texto) {
+    window.speechSynthesis.cancel();
+    const msg = new SpeechSynthesisUtterance(texto);
+    msg.rate = 1.2;
+    window.speechSynthesis.speak(msg);
+}
+
+function iniciarVoz() {
+    document.getElementById('status-ia').innerText = "IA OUVINDO...";
+    falar("Iniciando. Diga seu nome completo.");
+    recognition.start();
+}
+
+recognition.onresult = (event) => {
+    const resultado = event.results[0][0].transcript;
+    console.log("IA Ouviu:", resultado);
+
+    // Fluxo de Coleta por Voz - Sem Alterações na Lógica
+    if (!dadosUsuario.nome) {
+        dadosUsuario.nome = resultado;
+        falar("Nome capturado. Agora diga seu CPF.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.cpf) {
+        dadosUsuario.cpf = resultado.replace(/\D/g, "");
+        falar("CPF capturado. Agora diga seu ENDEREÇO COMPLETO.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.endereco) {
+        dadosUsuario.endereco = resultado;
+        falar("Endereço capturado. Agora diga seu NUMERO DE WHATSAPP.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.whatsapp) {
+        dadosUsuario.whatsapp = resultado.replace(/\D/g, "");
+        falar("Whatsapp capturado. Agora diga seu E-mail.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.email) {
+        dadosUsuario.email = resultado;
+        falar("E-mail capturado. Agora diga seu CEP.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.cep) {
+        dadosUsuario.cep = resultado.replace(/\D/g, "");
+        falar("CEP capturado. Agora diga a descrição do produto.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.descricao) {
+        dadosUsuario.descricao = resultado;
+        falar("Descrição capturada. Agora diga o ID DO PRODUTO.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.id_produto) {
+        dadosUsuario.id_produto = resultado;
+        falar("ID capturado. Agora diga o VALOR DO PRODUTO.");
+        setTimeout(() => recognition.start(), 1500);
+    } 
+    else if (!dadosUsuario.valor) {
+        dadosUsuario.valor = resultado;
+        falar("Sinal enviado. Processando na Pagaleve.");
+        enviarParaAWS();
+    }
+};
+
+// CONEXÃO COM O MOTOR V12 NA PORTA 3000 [IP 54.207.222.79]
 async function enviarParaAWS() {
     document.getElementById('status-ia').innerText = "ENVIANDO AO IP 54.207.222.79...";
     
-    // Captura o arquivo de RG que já deve estar selecionado no front
     const arquivoRG = document.querySelector('input[type="file"]')?.files[0];
     
     const formData = new FormData();
+    // Dados de Voz
     formData.append('nome', dadosUsuario.nome);
     formData.append('cpf', dadosUsuario.cpf);
     formData.append('endereco', dadosUsuario.endereco);
@@ -223,91 +302,28 @@ async function enviarParaAWS() {
     formData.append('descricao', dadosUsuario.descricao);
     formData.append('id_produto', dadosUsuario.id_produto);
     formData.append('valor', dadosUsuario.valor);
+    
+    // Credenciais de Acesso para o Robô Puppeteer
+    formData.append('client_id', CLIENT_ID);
+    formData.append('client_secret', CLIENT_SECRET);
+    
+    if (arquivoRG) formData.append('rg', arquivoRG);
 
     try {
         const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
             method: 'POST',
-            body: formData
+            body: formData // Envia tudo (Voz + RG + Chaves API)
         });
         
         const res = await response.json();
         if (res.link) {
-            window.location.href = res.link;
+            window.location.href = res.link; // Redireciona para o Checkout gerado
         }
     } catch (err) {
         console.log("Erro de conexão, mas sinal emitido.");
-        document.getElementById('status-ia').innerText = "SINAL ATIVO!";
+        document.getElementById('status-ia').innerText = "SINAL DE AUTORIDADE ATIVO!";
     }
 }
-
-const express = require('express');
-const puppeteer = require('puppeteer');
-const multer = require('multer');
-const Tesseract = require('tesseract.js');
-const path = require('path');
-const app = express();
-
-app.use(cors());
-app.use(express.json());
-
-app.post('/registrar-completo', async (req, res) => {
-    const dados = req.body; // Dados que vieram da voz (nome, cpf, valor, etc)
-    
-    console.log("⚡ INICIANDO:", dados.nome);
-if (req.file) {
-   const { data: { text } } = await Tesseract.recognize(req.file.path, 'por');
-   
-
-    const browser = await puppeteer.launch({ 
-        headless: true, 
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] 
-    });
-
-    try {
-        const page = await browser.newPage();
-        
-        // 1. LOGIN NA PAGALEVE [MANTIDO EXATAMENTE]
-        await page.goto('https://dashboard.pagaleve.com.br/login');
-        await page.type('#email', 'contato@droppfy.com');
-        await page.type('#password', '878I@hweH878');
-        await page.click("button[type='submit']");
-
-// SUAS CREDENCIAIS DE AUTORIDADE [MANTIDAS EXATAMENTE]
-const CLIENT_ID = "01KFCGPKZX7K38GAH2VHSJA6CJ";
-const CLIENT_SECRET = "GaB0JmBmYPZmFdocWrlSlM3XUUYDE1kozlyrovih";
-
-        // 2. CRIAÇÃO DO LINK COM DADOS DA VOZ
-        await page.waitForTimeout(5000); // Aguarda carregar o dashboard
-        
-        // Seleciona o botão de criar link
-        const [botaoCriar] = await page.$x("//button[contains(., 'Criar link de pagamento')]");
-        if (botaoCriar) await botaoCriar.click();
-
-        // Preenche com o que a IA ouviu
-        await page.waitForSelector('#customer_name');
-        await page.type('#customer_name', dados.nome);
-        await page.type('#customer_cpf', dados.cpf);
-        await page.type('#amount', dados.valor); // Valor coletado por voz
-        
-        // 3. FINALIZAÇÃO
-        await page.click("button[type='submit']");
-        
-        // Captura o link gerado para devolver ao front-end
-        await page.waitForSelector('.payment-link-url');
-        const linkGerado = await page.$eval('.payment-link-url', el => el.innerText);
-
-        await browser.close();
-        res.json({ status: 'success', link: linkGerado });
-
-    } catch (error) {
-        console.error("Erro no Robô:", error);
-        await browser.close();
-        res.status(500).json({ status: 'error' });
-    }
-});
-
-app.listen(3000, () => console.log("🚀 MOTOR V12 ONLINE NA PORTA 3000"));
-
 </script>
     <script>
 
