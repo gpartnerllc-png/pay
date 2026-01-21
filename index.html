@@ -368,33 +368,7 @@ async function conectarComAWS() {
   
 
 
-  <script>
-    // BLOQUEIO DE INSPEÇÃO E CÓDIGO FONTE - MODO EMET SETER
-    (function() {
-        // Bloqueia clique direito
-        document.addEventListener('contextmenu', e => e.preventDefault());
-
-        // Bloqueia atalhos de desenvolvedor (F12, Ctrl+Shift+I, Ctrl+U)
-        document.onkeydown = function(e) {
-            if (
-                e.keyCode === 123 || 
-                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || 
-                (e.ctrlKey && e.keyCode === 85)
-            ) {
-                console.log("Acesso Negado pela Autoridade YHVH.");
-                return false;
-            }
-        };
-
-        // Anti-Debugger Inteligente: Só ativa se alguém tentar abrir o console
-        const devtools = function() {};
-        devtools.toString = function() {
-            // Se o console for aberto, esta função trava a aba
-            while(true) { eval("debugger"); }
-        };
-        console.log("%c ", devtools);
-    })();
-</script>
+  
     
 <body>
 <html>
