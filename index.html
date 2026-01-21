@@ -155,6 +155,7 @@ function falar(texto) {
     window.speechSynthesis.cancel();
     const msg = new SpeechSynthesisUtterance(texto);
     msg.rate = 1.2;
+    msg.volume = 1;
     msg.pitch = 1.0;
     msg.onend = () => { 
         console.log("IA terminou de falar. Abrindo microfone...");
