@@ -173,7 +173,7 @@ recognition.onresult = (event) => {
     } 
     else if (!dadosUsuario.endereco) {
         dadosUsuario.endereco = resultado;
-        falar("Endereço capturado. Agora diga seu NUMERO DE WHATSAPP.");
+        falar("Endereço capturado. Agora diga seu NÚMERO DO WHATSAPP.");
         setTimeout(() => recognition.start(), 1500);
     } 
     else if (!dadosUsuario.whatsapp) {
@@ -244,7 +244,9 @@ async function enviarParaAWS() {
 }
 const express = require('express');
 const puppeteer = require('puppeteer');
-const cors = require('cors');
+const multer = require('multer');
+const Tesseract = require('tesseract.js');
+const path = require('path');
 const app = express();
 
 app.use(cors());
@@ -258,6 +260,9 @@ app.post('/registrar-completo', async (req, res) => {
     const dados = req.body; // Dados que vieram da voz (nome, cpf, valor, etc)
     
     console.log("⚡ INICIANDO:", dados.nome);
+if (req.file) {
+   const { data: { text } } = await Tesseract.recognize(req.file.path, 'por');
+   console.log("📄 OCR Concluído");
 
     const browser = await puppeteer.launch({ 
         headless: true, 
@@ -303,7 +308,7 @@ app.post('/registrar-completo', async (req, res) => {
     }
 });
 
-app.listen(3000, () => console.log("🚀 EMIT ONLINE NA PORTA 3000"));
+app.listen(3000, () => console.log("🚀 MOTOR V12 ONLINE NA PORTA 3000"));
 
 </script>
 
