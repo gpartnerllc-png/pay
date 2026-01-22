@@ -25,6 +25,67 @@
         .footer-info { font-size: 0.6rem; opacity: 0.6; margin-top: 20px; text-transform: uppercase; letter-spacing: 1px; }
 </STYLE>
 
+
+        <style>
+    body, html {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #000;
+        overflow-x: hidden;
+    }
+
+    #universo-v12 {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        /* Link da imagem integrada abaixo */
+        background-image: url('https://files.catbox.moe/o6o2g6.jfif'); 
+        background-size: cover;
+        background-position: center;
+        z-index: -2;
+        /* Movimento constante de vida */
+        animation: movimentoSagrado 25s infinite alternate ease-in-out;
+        filter: brightness(1.1) contrast(1.3) saturate(1.2);
+    }
+
+    /* Camada de Brilho para destacar o painel V12 */
+    #overlay-luz {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: radial-gradient(circle, rgba(255,140,0,0.1) 0%, rgba(0,0,0,0.7) 90%);
+        z-index: -1;
+    }
+
+    @keyframes movimentoSagrado {
+        0% { transform: scale(1.0); filter: hue-rotate(0deg); }
+        50% { transform: scale(1.15); filter: hue-rotate(5deg); }
+        100% { transform: scale(1.0); filter: hue-rotate(0deg); }
+    }
+</style>
+
+<div id="universo-v12"></div>
+<div id="overlay-luz"></div>
+
+<script>
+    document.addEventListener('mousemove', (e) => {
+        const x = (window.innerWidth / 2 - e.pageX) / 40;
+        const y = (window.innerHeight / 2 - e.pageY) / 40;
+        const bg = document.getElementById('universo-v12');
+        // Adiciona movimento conforme a autoridade do seu mouse
+        bg.style.transform = `scale(1.1) translate(${x}px, ${y}px)`;
+    });
+</script>
+
+
+    
+
      <style>
 
 <div id="vanta-bg"></div>
