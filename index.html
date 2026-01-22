@@ -75,63 +75,59 @@
 
     
 
-     <style>
+    <style>
+    body, html { 
+        margin: 0; padding: 0; width: 100%; height: 100%; 
+        overflow: hidden; background: #000; font-family: 'Inter', sans-serif; 
+    }
+    
+    /* Fundo Neural Vivo - Estabilizado */
+    #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
 
-<div id="vanta-bg"></div>
+    /* Container Centralizado */
+    .container {
+        position: relative; z-index: 10;
+        height: 100vh; display: flex; align-items: center; justify-content: center;
+        perspective: 1000px;
+    }
 
-  
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Inter', sans-serif; }
-        
-        /* Fundo Neural Vivo */
-        #vanta-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+    /* Card V12 - AGORA ESTÁTICO E SÓLIDO */
+    .card-v12 {
+        background: rgba(255, 255, 255, 0.95);
+        width: 380px; padding: 40px; border-radius: 40px;
+        text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        /* Removida a animação flutuar para garantir estabilidade do áudio */
+        border: 2px solid #ff8c00;
+        transform: none; 
+    }
 
-        /* Card Flutuante 3D */
-        .container {
-            position: relative; z-index: 10;
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            perspective: 1000px;
-        }
+    .badge-v12 {
+        background: #ff8c00; color: white; display: inline-block;
+        padding: 8px 25px; border-radius: 10px; font-family: 'Orbitron', sans-serif;
+        font-weight: 900; font-size: 22px; margin-bottom: 20px;
+        box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+    }
 
-        .card-v12 {
-            background: rgba(255, 255, 255, 0.95);
-            width: 380px; padding: 40px; border-radius: 40px;
-            text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            transform: translateZ(0); animation: flutuar 4s infinite ease-in-out;
-            border: 2px solid #ff8c00;
-        }
+    h1 { font-family: 'Orbitron', sans-serif; font-size: 24px; color: #001529; text-transform: uppercase; margin: 10px 0; letter-spacing: 1px; }
+    p { font-size: 12px; color: #666; margin-bottom: 30px; }
 
-        @keyframes flutuar {
-            0%, 100% { transform: translateY(0) rotateX(2deg); }
-            50% { transform: translateY(-20px) rotateX(-2deg); }
-        }
+    .btn-mic {
+        width: 80px; height: 80px; background: radial-gradient(circle, #ff8c00, #e67e22);
+        border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;
+        cursor: pointer; box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); transition: 0.3s;
+        border: none; outline: none;
+    }
 
-        .badge-v12 {
-            background: #ff8c00; color: white; display: inline-block;
-            padding: 8px 25px; border-radius: 10px; font-family: 'Orbitron', sans-serif;
-            font-weight: 900; font-size: 22px; margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
-        }
+    .btn-mic:hover { transform: scale(1.1); box-shadow: 0 0 40px #ff8c00; }
 
-        h1 { font-family: 'Orbitron', sans-serif; font-size: 24px; color: #001529; text-transform: uppercase; margin: 10px 0; letter-spacing: 1px; }
-        p { font-size: 12px; color: #666; margin-bottom: 30px; }
+    .btn-comando {
+        background: #ff8c00; color: white; border: none; width: 100%;
+        padding: 18px; border-radius: 15px; font-weight: bold; cursor: pointer;
+        text-transform: uppercase; font-size: 14px; box-shadow: 0 10px 20px rgba(255, 140, 0, 0.3);
+    }
 
-        .btn-mic {
-            width: 80px; height: 80px; background: radial-gradient(circle, #ff8c00, #e67e22);
-            border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; box-shadow: 0 0 20px rgba(255, 140, 0, 0.6); transition: 0.3s;
-            border: none; outline: none;
-        }
-
-        .btn-mic:hover { transform: scale(1.1); box-shadow: 0 0 40px #ff8c00; }
-
-        .btn-comando {
-            background: #ff8c00; color: white; border: none; width: 100%;
-            padding: 18px; border-radius: 15px; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; font-size: 14px; box-shadow: 0 10px 20px rgba(255, 140, 0, 0.3);
-        }
-
-        #status-ia { color: #ff8c00; font-weight: bold; margin-top: 15px; font-size: 11px; text-transform: uppercase; }
-    </style>
+    #status-ia { color: #ff8c00; font-weight: bold; margin-top: 15px; font-size: 11px; text-transform: uppercase; }
+</style>
 </head>
 <body>
 
