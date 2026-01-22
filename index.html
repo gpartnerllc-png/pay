@@ -28,29 +28,18 @@
 
         <style>
     body, html {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #000;
-        overflow-x: hidden;
-    }
-
-    #universo-v12 {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100vh;
-        /* Link da imagem integrada abaixo */
-        background-image: url('https://files.catbox.moe/o6o2g6.jfif'); 
-        background-size: cover;
-        background-position: center;
-        z-index: -2;
-        /* Movimento constante de vida */
-        animation: movimentoSagrado 25s infinite alternate ease-in-out;
-        filter: brightness(1.1) contrast(1.3) saturate(1.2);
-    }
+        #universo-v12 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('https://files.catbox.moe/o6o2g6.jfif');
+    background-size: cover;
+    z-index: -2;
+    pointer-events: none; /* ESSENCIAL: O fundo não pode interceptar o clique do botão */
+    animation: movimentoSagrado 25s infinite alternate ease-in-out;
+}
 
     /* Camada de Brilho para destacar o painel V12 */
     #overlay-luz {
